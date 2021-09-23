@@ -48,8 +48,10 @@ def get_vmmap(meminfo):
                     if meminfo.ld[1] < page.end:
                         meminfo.ld[1] = page.end
             else:
-                meminfo.executable[0] = page.start
-                meminfo.executable[1] = page.end
+                if meminfo.executable[0] == -1:
+                    meminfo.executable[0] = page.start
+                if meminfo.executable[1] < page.end:
+                    meminfo.executable[1] = page.end
         if page.is_stack:
             meminfo.stack[0] = page.start
             meminfo.stack[1] = page.end
