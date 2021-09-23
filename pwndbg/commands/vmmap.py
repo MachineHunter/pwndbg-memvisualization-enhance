@@ -52,6 +52,7 @@ parser.add_argument('-x', '--executable', action='store_true', help='Display exe
 @pwndbg.commands.OnlyWhenRunning
 def vmmap(gdbval_or_str=None, writable=False, executable=False):
     pages = pwndbg.vmmap.get()
+    # import pdb; pdb.set_trace()
 
     if gdbval_or_str:
         pages = list(filter(pages_filter(gdbval_or_str), pages))

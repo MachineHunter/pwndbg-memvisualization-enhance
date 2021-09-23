@@ -44,7 +44,7 @@ def clear_screen(out=sys.stdout):
 config_clear_screen = pwndbg.config.Parameter('context-clear-screen', False, 'whether to clear the screen before printing the context')
 config_output = pwndbg.config.Parameter('context-output', 'stdout', 'where pwndbg should output ("stdout" or file/tty).')
 config_context_sections = pwndbg.config.Parameter('context-sections',
-                                                  'regs disasm code ghidra stack memview backtrace expressions',
+                                                  'regs disasm code ghidra stack backtrace expressions',
                                                   'which context sections are displayed (controls order)')
 
 # Storing output configuration per section
@@ -552,12 +552,12 @@ def context_stack(target=sys.stdout, with_banner=True, width=None):
 
 
 def context_memview(target=sys.stdout, with_banner=True, width=None):
-    result = [pwndbg.ui.banner("memview", target=target, width=width)] if with_banner else []
+    result = [pwndbg.ui.banner("stack", target=target, width=width)] if with_banner else []
     meminfo = pwndbg.memview.memory.get()
-    result.append("executable %s-%s" % (hex(meminfo.executable[0]), hex(meminfo.executable[1])))
-    result.append("libc       %s-%s" % (hex(meminfo.libc[0]), hex(meminfo.libc[1])))
-    result.append("ld         %s-%s" % (hex(meminfo.ld[0]), hex(meminfo.ld[1])))
-    result.append("stack      %s-%s" % (hex(meminfo.stack[0]), hex(meminfo.stack[1])))
+    result.append("executable %s - %s" % (hex(meminfo.executable[0]), hex(meminfo.executable[1])))
+    result.append("libc %s - %s" % (hex(meminfo.libc[0]), hex(meminfo.libc[1])))
+    result.append("ld %s - %s" % (hex(meminfo.ld[0]), hex(meminfo.ld[1])))
+    result.append("stack %s - %s" % (hex(meminfo.stack[0]), meminfo.stack[1]))
     return result
 
 
