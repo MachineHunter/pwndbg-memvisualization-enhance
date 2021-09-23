@@ -555,6 +555,13 @@ def context_memview(target=sys.stdout, with_banner=True, width=None):
     result = [pwndbg.ui.banner("memview", target=target, width=width)] if with_banner else []
     meminfo = pwndbg.memview.memory.get()
     result.append("executable %s-%s" % (hex(meminfo.executable[0]), hex(meminfo.executable[1])))
+    result.append("   .text   %s-%s" % (hex(meminfo.text_section[0]), hex(meminfo.text_section[1])))
+    result.append("   .plt    %s-%s" % (hex(meminfo.plt_section[0]), hex(meminfo.plt_section[1])))
+    result.append("   .got    %s-%s" % (hex(meminfo.got_section[0]), hex(meminfo.got_section[1])))
+    result.append("   .pltgot %s-%s" % (hex(meminfo.pltgot_section[0]), hex(meminfo.pltgot_section[1])))
+    result.append("   .gotplt %s-%s" % (hex(meminfo.gotplt_section[0]), hex(meminfo.gotplt_section[1])))
+    result.append("   .data   %s-%s" % (hex(meminfo.data_section[0]), hex(meminfo.data_section[1])))
+    result.append("   .bss    %s-%s" % (hex(meminfo.bss_section[0]), hex(meminfo.bss_section[1])))
     result.append("libc       %s-%s" % (hex(meminfo.libc[0]), hex(meminfo.libc[1])))
     result.append("ld         %s-%s" % (hex(meminfo.ld[0]), hex(meminfo.ld[1])))
     result.append("stack      %s-%s" % (hex(meminfo.stack[0]), hex(meminfo.stack[1])))
