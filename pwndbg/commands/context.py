@@ -565,6 +565,7 @@ def context_memview(target=sys.stdout, with_banner=True, width=None):
     result.append("libc       %s-%s" % (hex(meminfo.libc[0]), hex(meminfo.libc[1])))
     result.append("ld         %s-%s" % (hex(meminfo.ld[0]), hex(meminfo.ld[1])))
     result.append("stack      %s-%s" % (hex(meminfo.stack[0]), hex(meminfo.stack[1])))
+    result.append("heap       uninitialized" if meminfo.heap[0]==-1 else "heap       %s-%s" % (hex(meminfo.heap[0]), hex(meminfo.heap[1])))
     return result
 
 

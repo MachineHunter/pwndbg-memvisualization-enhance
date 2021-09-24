@@ -22,14 +22,13 @@ class MemInfo:
     libc            = [-1, -1]
     ld              = [-1, -1]
     stack           = [-1, -1]
-
+    heap            = [-1, -1]
 
 def get():
     meminfo = MemInfo()
     get_vmmap(meminfo)
     get_elfheader(meminfo)
     return meminfo
-
 
 """
 can retrive
@@ -64,7 +63,11 @@ def get_vmmap(meminfo):
         if page.is_stack:
             meminfo.stack[0] = page.start
             meminfo.stack[1] = page.end
-    
+            
+        if page.objfile=="[heap]":
+            meminfo.heap[0] = page.start
+            meminfo.heap[1] = page.end
+
     return meminfo
 
 
