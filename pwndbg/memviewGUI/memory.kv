@@ -1,0 +1,82 @@
+#:kivy 2.0.0
+#: import hex kivy.utils.get_color_from_hex
+
+MemoryRoot:
+
+<MemoryRoot>:
+    canvas.before:
+        Color:
+            rgba: hex('#ffffff')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    StartMemory:
+        id: start_memory
+    
+<StartMemory>:
+    FloatLayout:
+        size: root.size
+
+        Label:
+            id: memory_map
+            text: "メモリマップ"
+            font_size: 24
+            color: '#000000'
+            size_hint: (0.15, 0.07)
+            pos_hint: {'center_x': 0.4, 'top': 0.99}
+        
+        Label:
+            id: memory_base
+            size_hint: (0.25, 0.8)
+            pos_hint: {'center_x': 0.4, 'top': 0.91}
+            canvas.before:
+                Color:
+                    rgba: hex('#fffacd')
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+        
+        Button:
+            id: snap_button
+            text: 'スナップショットを撮る'
+            size_hint: (0.5, 0.07)
+            font_size: 30
+            pos_hint: {'center_x': 0.5, 'top': 0.08}
+            on_press: print(type(str(app.root.address_dic['stack'][0])))
+        
+        #StackArea:
+        #    id: Stack
+        #HeapArea:
+        #    id: Heap
+
+<StackArea>:
+    FloatLayout:
+        size: root.size
+        Label:
+            id: stack_label
+            text: 'スタック'
+            font_size: '24'
+            size_hint: (0.25, 0.1)
+            pos_hint: {'center_x': 0.4, 'top': 0.21}
+            canvas.before:
+                Color:
+                    rgba: hex('#87cefa')
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+<HeapArea>:
+    FloatLayout:
+        size: root.size
+        Label:
+            id: stack_label
+            text: 'ヒープ'
+            font_size: '24'
+            size_hint: (0.25, 0.1)
+            pos_hint: {'center_x': 0.4, 'top': 0.51}
+            canvas.before:
+                Color:
+                    rgba: hex('#ee82ee')
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
