@@ -5,11 +5,14 @@ memory information for memory visualization tool
 """
 from elftools.elf.elffile import ELFFile
 import pwndbg.vmmap
+import pwndbg.regs
 
 
 class MemInfo:
     """
     page = [<start>, <end>]
+    regs = {"rax":<int value>, ...}
+    flags = {"CF":0, ...}
     """
     executable      = [-1, -1]
     text_section    = [-1, -1]
@@ -23,18 +26,20 @@ class MemInfo:
     ld              = [-1, -1]
     stack           = [-1, -1]
     heap            = [-1, -1]
+    regs            = {}
 
 def get():
     meminfo = MemInfo()
     get_vmmap(meminfo)
     get_elfheader(meminfo)
+    get_regs(meminfo)
     return meminfo
 
 """
 can retrive
 - executable mapped location
 - stack location
-- (?) heap location
+- heap location
 - libc location
 - loader location
 """
@@ -118,3 +123,15 @@ def get_elfheader(meminfo):
                 meminfo.bss_section[0] = start
                 meminfo.bss_section[1] = end
 
+
+"""
+can retrive
+- all register value
+"""
+def get_regs(meminfo):
+    regs = pwndbg.regs
+    for gpr in regs.current.gpr:
+        meminfo.regs[gpr] = regs[gpr]
+    meminfo.regs[regs.current.stack] = regs[regs.current.stack]
+    meminfo.regs[regs.current.frame] = regs[regs.current.frame]
+    meminfo.regs[regs.current.pc]    = regs.pc
