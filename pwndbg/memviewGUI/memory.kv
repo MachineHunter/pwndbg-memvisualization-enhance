@@ -28,9 +28,8 @@ MemoryRoot:
         scroll_type: ['bars']
         bar_width: 16
         FloatLayout:
+            id: base_area
             size_hint_y: root.scroll_height / root.height
-            MemoryArea:
-                id: memory_area          
 
     FloatLayout:
         size_hint_x: 0.3
@@ -80,11 +79,6 @@ MemoryRoot:
             font_size: 30
             pos_hint: {'x': 0.1, 'top': 0.12}
             on_press: print(app.root.pos)
-
-<MemoryArea>:
-    FloatLayout:
-        id: base_area
-        size: root.size
 
 <NoneArea>:
     FloatLayout:

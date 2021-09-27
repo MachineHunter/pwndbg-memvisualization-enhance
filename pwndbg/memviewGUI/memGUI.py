@@ -57,13 +57,6 @@ class NoneArea(SectionArea):
     def set_config(self, margin_y, all_y):
         self.memory_height = (all_y - margin_y) / all_y
         self.top = (all_y - margin_y/2) / all_y
-    
-
-class MemoryArea(Widget):
-    y_dic = DictProperty({})
-    top_dic = DictProperty({})
-    def __init__(self, **kwargs):
-        super(MemoryArea, self).__init__(**kwargs)
 
 class StartMemory(BoxLayout):
     scroll_height = NumericProperty()
@@ -107,7 +100,7 @@ class MemoryRoot(FloatLayout):
         #self.na = NoneArea()
         #self.na.set_config(self.margin_y, self.all_y)
         #self.sm.ids['memory_area'].ids['base_area'].add_widget(self.na)
-        base = self.sm.ids['memory_area'].ids['base_area']
+        base = self.sm.ids['base_area']
         self.address_dic['︙'] = [self.address_dic['heap'][1], self.address_dic['libc'][0]]
         for key in self.address_dic:
             if self.address_dic[key][0] == -1 and self.address_dic[key][1] == -1:
