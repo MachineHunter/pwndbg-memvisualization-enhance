@@ -96,6 +96,7 @@ class MemoryRoot(FloatLayout):
         return str(self.address_dic[key][0])
 
     def set_address(self, meminfo):
+        self.all_y = 0
         self.address_dic = memInfo_turn_to_dic(meminfo)
         self.calc_y()
         self.calc_top()
