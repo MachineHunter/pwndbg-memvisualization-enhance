@@ -99,7 +99,6 @@ class MemoryRoot(FloatLayout):
         self.address_dic = memInfo_turn_to_dic(meminfo)
         self.calc_y()
         self.calc_top()
-        print(self.y_dic)
         self.clear_widgets()
         self.sm = StartMemory()
         self.sm.set_height(self.all_y)
