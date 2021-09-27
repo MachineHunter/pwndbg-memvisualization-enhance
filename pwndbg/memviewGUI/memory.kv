@@ -10,73 +10,120 @@ MemoryRoot:
         Rectangle:
             pos: self.pos
             size: self.size
+
+        Color:
+            rgba: hex('#000000')
+        Line:
+            points: [root.size[0]*0.7, 0, root.size[0]*0.7, root.size[1], root.size[0]*0.7, 0]
+            width: 1
     StartMemory:
         id: start_memory
     
 <StartMemory>:
-    FloatLayout:
-        size: root.size
+    orientation: 'horizontal'
+    size: root.size
+    ScrollView:
+        id: scroll_view
+        size_hint_x: 0.7
+        scroll_type: ['bars']
+        bar_width: 16
+        FloatLayout:
+            size_hint_y: root.scroll_height / root.height
+            MemoryArea:
+                id: memory_area          
 
-        Label:
-            id: memory_map
-            text: "メモリマップ"
-            font_size: 24
-            color: '#000000'
-            size_hint: (0.15, 0.07)
-            pos_hint: {'center_x': 0.4, 'top': 0.99}
-        
-        Label:
-            id: memory_base
-            size_hint: (0.25, 0.8)
-            pos_hint: {'center_x': 0.4, 'top': 0.91}
-            canvas.before:
-                Color:
-                    rgba: hex('#fffacd')
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
+    FloatLayout:
+        size_hint_x: 0.3
+        canvas.before:
+            Color:
+                rgba: hex('#fffacd')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Button:
+            id: stop
+            text: '||'
+            bold: True
+            size_hint: (0.2, 0.1)
+            font_size: 50
+            pos_hint: {'x': 0.1, 'top': 0.95}
+            on_press: print(app.root.ids['start_memory'].ids)
+            
+        Button:
+            id: continue
+            text: '▶'
+            size_hint: (0.2, 0.1)
+            font_size: 50
+            pos_hint: {'x': 0.35, 'top': 0.95}
+            on_press: print(app.root.pos)
+
+        Button:
+            id: snap
+            text: 'Snapshot'
+            size_hint: (0.8, 0.1)
+            font_size: 30
+            pos_hint: {'x': 0.1, 'top': 0.80}
+            on_press: print(app.root.pos)
         
         Button:
-            id: snap_button
-            text: 'スナップショットを撮る'
-            size_hint: (0.5, 0.07)
+            id: view_snap
+            text: 'View Snapshot'
+            size_hint: (0.8, 0.1)
             font_size: 30
-            pos_hint: {'center_x': 0.5, 'top': 0.08}
-            on_press: print(type(str(app.root.address_dic['stack'][0])))
+            pos_hint: {'x': 0.1, 'top': 0.65}
+            on_press: print(app.root.pos)
         
-        #StackArea:
-        #    id: Stack
-        #HeapArea:
-        #    id: Heap
+        Button:
+            id: help
+            text: 'Help'
+            size_hint: (0.25, 0.1)
+            font_size: 30
+            pos_hint: {'x': 0.1, 'top': 0.12}
+            on_press: print(app.root.pos)
 
-<StackArea>:
+<MemoryArea>:
     FloatLayout:
+        id: base_area
+        size: root.size
+
+<NoneArea>:
+    FloatLayout:
+        id: none_area
         size: root.size
         Label:
-            id: stack_label
-            text: 'スタック'
-            font_size: '24'
-            size_hint: (0.25, 0.1)
-            pos_hint: {'center_x': 0.4, 'top': 0.21}
+            size_hint: (0.5, root.memory_height)
+            pos_hint: {'x': root.pos_x, 'top': root.top}
             canvas.before:
                 Color:
-                    rgba: hex('#87cefa')
+                    rgba: hex('#dcdcdc')
                 Rectangle:
                     pos: self.pos
                     size: self.size
 
-<HeapArea>:
+<SectionArea>:
     FloatLayout:
         size: root.size
         Label:
-            id: stack_label
-            text: 'ヒープ'
-            font_size: '24'
-            size_hint: (0.25, 0.1)
-            pos_hint: {'center_x': 0.4, 'top': 0.51}
+            text: root.text
+            font_size: root.font_size
+            color: root.text_color
+            size_hint: (root.x, root.y)
+            pos_hint: {'x': root.pos_x, 'top': root.top}
             canvas.before:
                 Color:
-                    rgba: hex('#ee82ee')
+                    rgba: hex(root.color)
                 Rectangle:
                     pos: self.pos
                     size: self.size
+        Label:
+            text: root.start_address
+            font_size: root.label_font_size
+            color: root.label_color
+            size_hint: (root.label_size[0], root.label_size[1])
+            pos_hint: {'x': root.label_x, 'top': root.top}
+        Label:
+            text: root.end_address
+            font_size: root.label_font_size
+            color: root.label_color
+            size_hint: (root.label_size[0], root.label_size[1])
+            pos_hint: {'x': root.label_x, 'top': root.top-root.y+root.label_size[1]}
