@@ -6,7 +6,6 @@ memory information for memory visualization tool
 from elftools.elf.elffile import ELFFile
 import pwndbg.vmmap
 
-
 class MemInfo:
     """
     page = [<start>, <end>]
