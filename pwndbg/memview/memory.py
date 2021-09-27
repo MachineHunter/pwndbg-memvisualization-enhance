@@ -3,6 +3,7 @@
 """
 memory information for memory visualization tool
 """
+import gdb
 from elftools.elf.elffile import ELFFile
 import pwndbg.vmmap
 import pwndbg.regs
@@ -12,7 +13,7 @@ class MemInfo:
     """
     page = [<start>, <end>]
     regs = {"rax":<int value>, ...}
-    flags = {"CF":0, ...}
+    frames = {"func name":<start addr>, ...}
     """
     executable      = [-1, -1]
     text_section    = [-1, -1]
@@ -27,12 +28,14 @@ class MemInfo:
     stack           = [-1, -1]
     heap            = [-1, -1]
     regs            = {}
+    frames          = {}
 
 def get():
     meminfo = MemInfo()
     get_vmmap(meminfo)
     get_elfheader(meminfo)
     get_regs(meminfo)
+    get_frames(meminfo)
     return meminfo
 
 """
@@ -135,3 +138,34 @@ def get_regs(meminfo):
     meminfo.regs[regs.current.stack] = regs[regs.current.stack]
     meminfo.regs[regs.current.frame] = regs[regs.current.frame]
     meminfo.regs[regs.current.pc]    = regs.pc
+
+
+"""
+can retrive
+- all stack frame start addr
+"""
+def get_frames(meminfo):
+    all_frames = []
+    current_frame = gdb.newest_frame()
+
+    # get all stack frames
+    while True:
+        all_frames.append(current_frame)
+        try:
+            candidate = current_frame.older()
+        except gdb.MemoryError:
+            break
+
+        if not candidate:
+            break
+        current_frame = candidate
+
+    # get start address of each frames
+    for f in all_frames:
+        if f.is_valid():
+            if f.older()!=None and f.older().read_register(pwndbg.regs.frame)!=f.read_register(pwndbg.regs.frame):
+                if f.name()=="__libc_start_main":
+                    # somehow rbp points wrong address on __libc_start_main
+                    continue
+                else:
+                    meminfo.frames[f.name()] = int(f.read_register(pwndbg.regs.frame))
