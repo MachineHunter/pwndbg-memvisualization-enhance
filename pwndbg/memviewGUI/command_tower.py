@@ -20,12 +20,12 @@ class MemInfo:
     ld              = [0x7ffff7fd2000, 0x7ffff7ffe000]
     stack           = [0x7ffffffde000, 0x7ffffffff000]
 
+
 if __name__ == '__main__':
-    meminfo = MemInfo()
     app = memGUI.MemoryApp()
-    app.set_meminfo(meminfo)
     th_app = threading.Thread(target=memGUI.app_run, args=(app,))
     th_app.start()
     
-    #time.sleep(2)
-    #memGUI.set_address(app, meminfo)
+    meminfo = MemInfo()
+    time.sleep(2)
+    memGUI.set_address(app, meminfo)
