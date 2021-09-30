@@ -30,6 +30,7 @@ import pwndbg.symbol
 import pwndbg.ui
 import pwndbg.vmmap
 import pwndbg.memview.memory
+import pwndbg.memview.memview_heap
 from pwndbg.color import message
 from pwndbg.color import theme
 
@@ -554,6 +555,7 @@ def context_stack(target=sys.stdout, with_banner=True, width=None):
 def context_memview(target=sys.stdout, with_banner=True, width=None):
     result = [pwndbg.ui.banner("memview", target=target, width=width)] if with_banner else []
     meminfo = pwndbg.memview.memory.get()
+    heapstring = pwndbg.memview.memview_heap.get(meminfo.heap)# process string to print for heap
     result.append("executable %s-%s" % (hex(meminfo.executable[0]), hex(meminfo.executable[1])))
     result.append("   .text   %s-%s" % (hex(meminfo.text_section[0]), hex(meminfo.text_section[1])))
     result.append("   .plt    %s-%s" % (hex(meminfo.plt_section[0]), hex(meminfo.plt_section[1])))
@@ -565,13 +567,15 @@ def context_memview(target=sys.stdout, with_banner=True, width=None):
     result.append("libc       %s-%s" % (hex(meminfo.libc[0]), hex(meminfo.libc[1])))
     result.append("ld         %s-%s" % (hex(meminfo.ld[0]), hex(meminfo.ld[1])))
     result.append("stack      %s-%s" % (hex(meminfo.stack[0]), hex(meminfo.stack[1])))
-    result.append("heap       uninitialized" if meminfo.heap[0]==-1 else "heap       %s-%s" % (hex(meminfo.heap[0]), hex(meminfo.heap[1])))
     result.append("---------------------------regs---------------------------------")
     for k,v in meminfo.regs.items():
         result.append(k+" : "+hex(v))
     result.append("---------------------------frames-------------------------------")
     for k,v in meminfo.frames.items():
         result.append(k+" : "+hex(v))
+    result.append("---------------------------heap-------------------------------")
+    result.append("heap       uninitialized" if meminfo.heap[0]==-1 else "heap       %s-%s" % (hex(meminfo.heap[0]), hex(meminfo.heap[1])))
+    result.append(heapstring)
     return result
 
 
