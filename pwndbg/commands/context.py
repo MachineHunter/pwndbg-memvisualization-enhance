@@ -567,7 +567,14 @@ def context_memview(target=sys.stdout, with_banner=True, width=None):
     result.append("libc       %s-%s" % (hex(meminfo.libc[0]), hex(meminfo.libc[1])))
     result.append("ld         %s-%s" % (hex(meminfo.ld[0]), hex(meminfo.ld[1])))
     result.append("stack      %s-%s" % (hex(meminfo.stack[0]), hex(meminfo.stack[1])))
-    #result.append("heap       uninitialized" if meminfo.heap[0]==-1 else "heap       %s-%s" % (hex(meminfo.heap[0]), hex(meminfo.heap[1])))
+    result.append("---------------------------regs---------------------------------")
+    for k,v in meminfo.regs.items():
+        result.append(k+" : "+hex(v))
+    result.append("---------------------------frames-------------------------------")
+    for k,v in meminfo.frames.items():
+        result.append(k+" : "+hex(v))
+    result.append("---------------------------heap-------------------------------")
+    result.append("heap       uninitialized" if meminfo.heap[0]==-1 else "heap       %s-%s" % (hex(meminfo.heap[0]), hex(meminfo.heap[1])))
     result.append(heapstring)
     return result
 
@@ -604,6 +611,7 @@ def context_backtrace(with_banner=True, target=sys.stdout, width=None):
     frame = newest_frame
     i     = 0
     bt_prefix = "%s" % B.config_prefix
+
     while True:
 
         prefix = bt_prefix if frame == this_frame else ' ' * len(bt_prefix)
