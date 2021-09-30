@@ -574,7 +574,6 @@ def context_memview(target=sys.stdout, with_banner=True, width=None):
     for k,v in meminfo.frames.items():
         result.append(k+" : "+hex(v))
     result.append("---------------------------heap-------------------------------")
-    result.append("heap       uninitialized" if meminfo.heap[0]==-1 else "heap       %s-%s" % (hex(meminfo.heap[0]), hex(meminfo.heap[1])))
     result.append(heapstring)
     return result
 
