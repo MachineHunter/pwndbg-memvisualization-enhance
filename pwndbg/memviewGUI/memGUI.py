@@ -1,5 +1,8 @@
 import threading
 import time
+import logging
+logging.getLogger("kivy").disabled = True
+
 from kivy.config import Config
 Config.set('graphics', 'width', '1200')
 Config.set('graphics', 'height', '800')
@@ -14,8 +17,8 @@ from kivy.properties import NumericProperty, StringProperty, ListProperty, DictP
 from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.resources import resource_add_path
 
-resource_add_path('./fonts')
-LabelBase.register(DEFAULT_FONT, 'meiryo.ttc')
+#resource_add_path('./fonts')
+#LabelBase.register(DEFAULT_FONT, 'meiryo.ttc')
 
 class SectionArea(Widget):
     start_address = StringProperty()
@@ -62,7 +65,7 @@ class StartMemory(BoxLayout):
     scroll_height = NumericProperty()
     def __init__(self, **kwargs):
         super(StartMemory, self).__init__(**kwargs)
-        self.scroll_height = 1800
+        self.scroll_height = 700
 
     def set_height(self, height):
         self.scroll_height = height
@@ -101,7 +104,10 @@ class MemoryRoot(FloatLayout):
         #self.na.set_config(self.margin_y, self.all_y)
         #self.sm.ids['memory_area'].ids['base_area'].add_widget(self.na)
         base = self.sm.ids['base_area']
-        self.address_dic['︙'] = [self.address_dic['heap'][1], self.address_dic['libc'][0]]
+        if self.address_dic['heap'][1] == -1:
+            self.address_dic['︙'] = [self.address_dic['.bss'][1], self.address_dic['libc'][0]]
+        else:
+            self.address_dic['︙'] = [self.address_dic['heap'][1], self.address_dic['libc'][0]]
         for key in self.address_dic:
             if self.address_dic[key][0] == -1 and self.address_dic[key][1] == -1:
                 continue
@@ -193,7 +199,7 @@ class MemoryApp(App):
 
     def build(self):
         self.rootWidget = MemoryRoot()
-        self.rootWidget.set_address(self.meminfo)
+        #self.rootWidget.set_address(self.meminfo)
         return self.rootWidget
 
     def set_meminfo(self, meminfo):
