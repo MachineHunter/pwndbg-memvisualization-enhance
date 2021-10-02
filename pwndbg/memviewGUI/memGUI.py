@@ -270,8 +270,6 @@ class MemoryRoot(FloatLayout):
             temp_top += self.y_dic[key]
             self.top_dic[key] = temp_top / self.all_y
 
-    def clear(self):
-        self.clear_widgets()
 
 class MemoryApp(App):
     def __init__(self, **kwargs):
