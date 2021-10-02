@@ -85,6 +85,7 @@ class MemoryRoot(FloatLayout):
     margin_y = NumericProperty(180)
     mapped_y = NumericProperty(360)
     all_y = NumericProperty(0)
+    meminfo = ObjectProperty()
     def __init__(self, **kwargs):
         super(MemoryRoot, self).__init__(**kwargs)
     
@@ -92,6 +93,7 @@ class MemoryRoot(FloatLayout):
         return str(self.address_dic[key][0])
 
     def set_address(self, meminfo):
+        self.meminfo = meminfo
         self.all_y = 0
         self.address_dic = memInfo_turn_to_dic(meminfo)
         self.calc_y()
@@ -199,7 +201,6 @@ class MemoryApp(App):
 
     def build(self):
         self.rootWidget = MemoryRoot()
-        #self.rootWidget.set_address(self.meminfo)
         return self.rootWidget
 
     def set_meminfo(self, meminfo):

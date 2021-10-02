@@ -27,7 +27,8 @@ if __name__ == '__main__':
     th_app = threading.Thread(target=memGUI.app_run, args=(app,))
     th_app.start()
     
-    #time.sleep(1)
-    while True:
+    time.sleep(1)
+    for i in range(32):
         app.set_address(meminfo)
         meminfo.plt_section[0] += 1
+        print(i)
