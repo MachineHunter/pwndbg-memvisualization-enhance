@@ -81,6 +81,8 @@ import pwndbg.vmmap
 import pwndbg.wrappers
 import pwndbg.wrappers.checksec
 import pwndbg.wrappers.readelf
+import pwndbg.memviewGUI.memGUI
+import pwndbg.memviewGUI.initGUI
 
 __version__ = pwndbg.version.__version__
 version = __version__
@@ -167,3 +169,6 @@ if 1:
 
 # Reading Comment file
 pwndbg.commands.comments.init()
+
+# init memGUI
+pwndbg.memviewGUI.initGUI.init()

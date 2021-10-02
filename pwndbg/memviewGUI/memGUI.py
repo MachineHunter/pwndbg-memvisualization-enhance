@@ -17,8 +17,10 @@ from kivy.properties import NumericProperty, StringProperty, ListProperty, DictP
 from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.resources import resource_add_path
 
-#resource_add_path('./fonts')
-#LabelBase.register(DEFAULT_FONT, 'meiryo.ttc')
+
+# resource_add_path('./fonts')
+# LabelBase.register(DEFAULT_FONT, 'meiryo.ttc')
+
 
 class HelpMemory(Widget):
     pass
@@ -196,6 +198,7 @@ class MemoryRoot(FloatLayout):
             self.address_dic['︙'] = [self.address_dic['.bss'][1], self.address_dic['libc'][0]]
         else:
             self.address_dic['︙'] = [self.address_dic['heap'][1], self.address_dic['libc'][0]]
+
         for key in self.address_dic:
             if self.address_dic[key][0] == -1 and self.address_dic[key][1] == -1:
                 continue
