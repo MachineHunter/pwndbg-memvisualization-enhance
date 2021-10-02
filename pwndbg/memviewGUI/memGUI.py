@@ -105,9 +105,6 @@ class MemoryRoot(FloatLayout):
     def __init__(self, **kwargs):
         super(MemoryRoot, self).__init__(**kwargs)
     
-    def address_value(self, key):
-        return str(self.address_dic[key][0])
-
     def set_memory(self):
         self.all_y = 0
         self.address_dic = memInfo_turn_to_dic(self.meminfo)
