@@ -1,5 +1,8 @@
 import threading
 import time
+import logging
+logging.getLogger("kivy").disabled = True
+
 from kivy.config import Config
 Config.set('graphics', 'width', '1200')
 Config.set('graphics', 'height', '800')
@@ -14,8 +17,10 @@ from kivy.properties import NumericProperty, StringProperty, ListProperty, DictP
 from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.resources import resource_add_path
 
+
 # resource_add_path('./fonts')
 # LabelBase.register(DEFAULT_FONT, 'meiryo.ttc')
+
 
 class SectionArea(Widget):
     start_address = StringProperty()
@@ -62,7 +67,7 @@ class StartMemory(BoxLayout):
     scroll_height = NumericProperty()
     def __init__(self, **kwargs):
         super(StartMemory, self).__init__(**kwargs)
-        self.scroll_height = 1800
+        self.scroll_height = 700
 
     def set_height(self, height):
         self.scroll_height = height

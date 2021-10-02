@@ -7,7 +7,7 @@ class MemInfo:
     """
     page = [<start>, <end>]
     """
-    executable      = [0x555555554000, 0x555555559000]
+    executable      = [0x555MachineHunter555554000, 0x555555559000]
     plt_section     = [0x555555555020, 0x555555555040]
     pltgot_section  = [0x555555555040, 0x555555555048]
     text_section    = [0x555555555050, 0x5555555551b1]
@@ -23,9 +23,6 @@ class MemInfo:
 
 if __name__ == '__main__':
     app = memGUI.MemoryApp()
+    #app.set_meminfo(meminfo)
     th_app = threading.Thread(target=memGUI.app_run, args=(app,))
     th_app.start()
-    
-    meminfo = MemInfo()
-    time.sleep(2)
-    memGUI.set_address(app, meminfo)
