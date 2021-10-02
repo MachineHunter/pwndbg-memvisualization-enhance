@@ -111,10 +111,7 @@ class MemoryRoot(FloatLayout):
         self.all_y = 0
         self.address_dic = memInfo_turn_to_dic(self.meminfo)
         self.calc_y()
-        print(self.y_dic)
-        print(self.y_rate_dic)
         self.calc_top()
-        print(self.top_dic)
         self.clear_widgets()
         self.sm = StartMemory()
         self.sm.set_height(self.all_y)
