@@ -123,6 +123,7 @@ class MemoryRoot(FloatLayout):
         #self.na.set_config(self.margin_y, self.all_y)
         #self.sm.ids['memory_area'].ids['base_area'].add_widget(self.na)
         base = self.sm.ids['base_area']
+        self.address_dic['︙'] = [self.address_dic['heap'][1], self.address_dic['libc'][0]]
         for key in self.address_dic:
             if self.address_dic[key][0] == -1 and self.address_dic[key][1] == -1:
                 continue
