@@ -273,10 +273,6 @@ class MemoryRoot(FloatLayout):
     def clear(self):
         self.clear_widgets()
 
-    def calculate_height(self):
-        d = self.end_address - self.end_address
-
-
 class MemoryApp(App):
     def __init__(self, **kwargs):
         super(MemoryApp, self).__init__(**kwargs)
