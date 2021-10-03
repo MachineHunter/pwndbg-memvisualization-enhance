@@ -246,7 +246,7 @@ class MemoryRoot(FloatLayout):
         self.set_memory()
     
     def on_click_freeze_button(self, type_):
-        print(App.get_running_app().update_enable, type_)
+        # print(App.get_running_app().update_enable, type_)
         if type_ == "play":
             App.get_running_app().set_mode(True)
         else:
