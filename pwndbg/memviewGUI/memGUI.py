@@ -2,7 +2,7 @@ import threading
 import time
 import logging
 import numpy
-logging.getLogger("kivy").disabled = True
+# logging.getLogger("kivy").disabled = True
 
 from kivy.config import Config
 Config.set('graphics', 'width', '1200')
@@ -106,6 +106,8 @@ class MemoryRoot(FloatLayout):
         super(MemoryRoot, self).__init__(**kwargs)
     
     def set_memory(self):
+        if not App.get_running_app().update_enable:
+            return
         self.all_y = 0
         self.address_dic = memInfo_turn_to_dic(self.meminfo)
         self.calc_y()
@@ -242,6 +244,13 @@ class MemoryRoot(FloatLayout):
 
     def back(self):
         self.set_memory()
+    
+    def on_click_freeze_button(self, type_):
+        print(App.get_running_app().update_enable, type_)
+        if type_ == "play":
+            App.get_running_app().set_mode(True)
+        else:
+            App.get_running_app().set_mode(False)
         
     def calc_y(self):
         for key in self.address_dic:
@@ -272,10 +281,14 @@ class MemoryApp(App):
     def __init__(self, **kwargs):
         super(MemoryApp, self).__init__(**kwargs)
         self.title = 'Memory Visualizer'
+        self.update_enable = True
 
     def build(self):
         self.rootWidget = MemoryRoot()
         return self.rootWidget
+
+    def set_mode(self, b):
+        self.update_enable = b
 
     def set_meminfo(self, meminfo):
         self.meminfo = meminfo
