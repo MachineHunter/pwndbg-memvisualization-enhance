@@ -2,7 +2,7 @@ import threading
 import time
 import logging
 import numpy
-# logging.getLogger("kivy").disabled = True
+logging.getLogger("kivy").disabled = True
 
 from kivy.config import Config
 Config.set('graphics', 'width', '1200')
@@ -246,6 +246,9 @@ class MemoryRoot(FloatLayout):
         self.set_memory()
     
     def on_click_freeze_button(self, type_):
+        # stop/playのボタンが押された時に発動する関数
+        # playが押されたら、updateを開始/stopなら停止
+        # 管理する変数は、appのインスタンスに持たせた.(layoutのupdateでこのインスタンスが消えるかも?と思ったので.kivyのライフサイクルまだよくわかってないもので..)
         # print(App.get_running_app().update_enable, type_)
         if type_ == "play":
             App.get_running_app().set_mode(True)
