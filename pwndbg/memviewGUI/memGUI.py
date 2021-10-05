@@ -200,12 +200,18 @@ class MemoryRoot(FloatLayout):
     def set_regs(self):
         regs = self.meminfo.regs
         base = self.sm.ids['base_area']
-        ra = RegisterArea()
         for k, v in self.address_dic.items():
             if v[0] <= regs["rip"] and regs["rip"] <= v[1]:
+                ra = RegisterArea()
                 d_address = regs["rip"] - v[0]
                 d_rate = self.top_dic[k] - d_address / (v[1] - v[0]) * self.y_rate_dic[k]
                 ra.set_point(d_rate, "rip", self.label_size)
+                base.add_widget(ra)
+            if v[0] <= regs["rsp"] and regs["rsp"] <= v[1]:
+                ra = RegisterArea()
+                d_address = regs["rsp"] - v[0]
+                d_rate = self.top_dic[k] - d_address / (v[1] - v[0]) * self.y_rate_dic[k]
+                ra.set_point(d_rate, "rsp", self.label_size)
                 base.add_widget(ra)
 
     def calc_y(self):
