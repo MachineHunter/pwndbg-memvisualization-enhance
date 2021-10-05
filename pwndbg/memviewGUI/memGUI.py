@@ -85,6 +85,15 @@ class SnapMemory(BoxLayout):
     def set_height(self, height):
         self.scroll_height = height
 
+
+class RegisterArea(Widget):
+    point = ListProperty()
+    def __init__(self, **kwargs):
+        super(RegisterArea, self).__init__(**kwargs)
+
+    def set_point(self, ):
+
+
 class MemoryRoot(FloatLayout):
     address_dic = DictProperty({})
     start_address = NumericProperty()
@@ -170,9 +179,20 @@ class MemoryRoot(FloatLayout):
                 w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#0000cd', self.base_label_size/self.all_y)
                 base.add_widget(w)
 
+    # show register pointing value
+    def set_regs(self):
+        regs = meminfo.regs
+        base = self.sm.ids['base_area']
+        ra = RegisterArea()
+        for k,v in self.address_dic.items():
+            if regs["rip"]>=v[0] and regs["rip"]<=v[1]:
+               (((v[1] - regs["rip"]) / self.base.y) * self.base_y_pxcel) / self.y_dic[k]
+            if regs["rsp"]>=v[0] and regs["rsp"]<=v[1]:
+
     def set_address(self, meminfo):
         self.meminfo = meminfo
         self.set_memory()
+        self.set_regs()
     
     def snapshot(self):
         self.all_y = 0

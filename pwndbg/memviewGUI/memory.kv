@@ -113,3 +113,14 @@ MemoryRoot:
             color: root.label_color
             size_hint: (root.label_size[0], root.label_size[1])
             pos_hint: {'x': root.label_x, 'top': root.top-root.y+root.label_size[1]}
+
+
+<RegisterArea>:
+    FloatLayout:
+			size: root.size
+			canvas.before:
+        Color:
+            rgba: hex('#000000')
+        Line:
+            points: [root.point[0]*0.7, 0, root.point[0]*0.7, root.point[1], root.point[0]*0.7, 0]
+            width: 1
