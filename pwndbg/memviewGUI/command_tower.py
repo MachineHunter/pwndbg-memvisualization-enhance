@@ -24,11 +24,10 @@ class MemInfo:
 
 if __name__ == '__main__':
     app = memGUI.MemoryApp()
-    app.run()
     #app.set_meminfo(meminfo)
-    #th_app = threading.Thread(target=memGUI.app_run, args=(app,))
-    #th_app.start()
+    th_app = threading.Thread(target=memGUI.app_run, args=(app,))
+    th_app.start()
 
-    #time.sleep(1)
-    #meminfo = MemInfo()
-    #app.set_address(meminfo)
+    time.sleep(1)
+    meminfo = MemInfo()
+    app.set_address(meminfo)

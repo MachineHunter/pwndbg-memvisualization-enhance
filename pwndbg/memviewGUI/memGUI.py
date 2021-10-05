@@ -61,12 +61,16 @@ class SectionArea(Widget):
         self.label_size[1] = label_size_rate
 
 class RegisterArea(Widget):
-    y = ListProperty()
+    y = NumericProperty(0)
+    text = StringProperty()
+    label_size = NumericProperty(0.02)
     def __init__(self, **kwargs):
         super(RegisterArea, self).__init__(**kwargs)
     
-    def set_point(self, y):
+    def set_point(self, y, text, label_size):
         self.y = y
+        self.text = text
+        self.label_size = label_size
 
 class NoneArea(SectionArea):
     memory_height = NumericProperty()
@@ -106,6 +110,7 @@ class MemoryRoot(FloatLayout):
     y_dic = DictProperty({})
     y_rate_dic = DictProperty({})
     top_dic = DictProperty({})
+    label_size = NumericProperty()
     base_y = NumericProperty(8)
     base_label_size = NumericProperty(36)
     base_y_pxcel = NumericProperty(50)
@@ -122,6 +127,7 @@ class MemoryRoot(FloatLayout):
         self.address_dic = memInfo_turn_to_dic(self.meminfo)
         self.calc_y()
         self.calc_top()
+        self.label_size = self.base_label_size/self.all_y
         self.clear_widgets()
         self.sm = StartMemory()
         self.sm.set_height(self.all_y)
@@ -134,31 +140,31 @@ class MemoryRoot(FloatLayout):
                 continue
             if key == '.plt':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ffd700', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ffd700', self.label_size)
                 base.add_widget(w)
             elif key == '.plt.got':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ffa500', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ffa500', self.label_size)
                 base.add_widget(w)
             elif key == '.text':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff8c00', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff8c00', self.label_size)
                 base.add_widget(w)
             elif key == '.got':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#f4a460', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#f4a460', self.label_size)
                 base.add_widget(w)
             elif key == '.got.plt':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff7f50', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff7f50', self.label_size)
                 base.add_widget(w)
             elif key == '.data':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff4500', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff4500', self.label_size)
                 base.add_widget(w)
             elif key == '.bss':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff69b4', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff69b4', self.label_size)
                 base.add_widget(w)
             elif key == 'heap':
                 if self.address_dic['heap'][1] != self.address_dic['.bss'][1]:
@@ -185,19 +191,22 @@ class MemoryRoot(FloatLayout):
     def set_address(self, meminfo):
         self.meminfo = meminfo
         self.set_memory()
+        self.set_regs()
 
     def back(self):
         self.set_memory()
+        self.set_regs()
 
     def set_regs(self):
         regs = self.meminfo.regs
         base = self.sm.ids['base_area']
         ra = RegisterArea()
         for k, v in self.address_dic.items():
-            if v[0] <= regs["rip"] and regs["rip"] <= regs[1]:
+            if v[0] <= regs["rip"] and regs["rip"] <= v[1]:
                 d_address = regs["rip"] - v[0]
-                d_rate = self.top_dic[k] - d_address / self.y_dic[k] * self.y_rate_dic[k]
-                ra.set_point(d_rate)
+                d_rate = self.top_dic[k] - d_address / (v[1] - v[0]) * self.y_rate_dic[k]
+                ra.set_point(d_rate, "rip", self.label_size)
+                base.add_widget(ra)
 
     def calc_y(self):
         for key in self.address_dic:
@@ -229,7 +238,6 @@ class MemoryApp(App):
         self.title = 'Memory Visualizer'
 
     def build(self):
-        print("a")
         self.rootWidget = MemoryRoot()
         return self.rootWidget
 
