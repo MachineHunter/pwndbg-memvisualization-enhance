@@ -19,6 +19,7 @@ class MemInfo:
     libc            = [0x7ffff7ddb000, 0x7ffff7f9c000]
     ld              = [0x7ffff7fd2000, 0x7ffff7ffe000]
     stack           = [0x7ffffffde000, 0x7ffffffff000]
+    regs            = {"rip":0x555555555080}
 
 
 if __name__ == '__main__':
