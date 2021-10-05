@@ -30,6 +30,8 @@ import pwndbg.symbol
 import pwndbg.ui
 import pwndbg.vmmap
 import pwndbg.memview.memory
+import pwndbg.memviewGUI.memGUI
+import pwndbg.memviewGUI.initGUI
 import pwndbg.memview.memview_heap
 from pwndbg.color import message
 from pwndbg.color import theme
@@ -552,9 +554,11 @@ def context_stack(target=sys.stdout, with_banner=True, width=None):
     return result
 
 
-def context_memview(target=sys.stdout, with_banner=True, width=None):
-    result = [pwndbg.ui.banner("memview", target=target, width=width)] if with_banner else []
+def context_memview(target=sys.stdout, with_banner=False, width=None):
+    app = pwndbg.memviewGUI.initGUI.get_instance()
     meminfo = pwndbg.memview.memory.get()
+    pwndbg.memviewGUI.memGUI.set_address(app, meminfo)
+
     heapstring = pwndbg.memview.memview_heap.get(meminfo.heap)# process string to print for heap
     result.append("executable %s-%s" % (hex(meminfo.executable[0]), hex(meminfo.executable[1])))
     result.append("   .text   %s-%s" % (hex(meminfo.text_section[0]), hex(meminfo.text_section[1])))
@@ -576,7 +580,6 @@ def context_memview(target=sys.stdout, with_banner=True, width=None):
     result.append("---------------------------heap-------------------------------")
     result.append(heapstring)
     return result
-
 
 backtrace_lines = pwndbg.config.Parameter('context-backtrace-lines', 8, 'number of lines to print in the backtrace context')
 backtrace_frame_label = theme.Parameter('backtrace-frame-label', 'f ', 'frame number label for backtrace')

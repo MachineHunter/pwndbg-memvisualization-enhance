@@ -41,19 +41,19 @@ MemoryRoot:
                 size: self.size
         Button:
             id: stop
-            text: '||'
-            bold: True
-            size_hint: (0.2, 0.1)
-            font_size: 50
+            text: 'stop'
+            #bold: True
+            size_hint: (0.3, 0.1)
+            font_size: 30
             pos_hint: {'x': 0.1, 'top': 0.95}
             on_press: print(app.root.ids['start_memory'].ids)
             
         Button:
             id: continue
-            text: '▶'
-            size_hint: (0.2, 0.1)
-            font_size: 50
-            pos_hint: {'x': 0.35, 'top': 0.95}
+            text: 'play'
+            size_hint: (0.3, 0.1)
+            font_size: 30
+            pos_hint: {'x': 0.45, 'top': 0.95}
             on_press: print(app.root.pos)
 
         Button:
@@ -70,14 +70,6 @@ MemoryRoot:
             size_hint: (0.8, 0.1)
             font_size: 30
             pos_hint: {'x': 0.1, 'top': 0.65}
-            on_press: print(app.root.pos)
-        
-        Button:
-            id: help
-            text: 'Help'
-            size_hint: (0.25, 0.1)
-            font_size: 30
-            pos_hint: {'x': 0.1, 'top': 0.12}
             on_press: print(app.root.pos)
 
 <NoneArea>:
