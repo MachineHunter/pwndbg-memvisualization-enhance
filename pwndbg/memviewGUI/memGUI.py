@@ -245,7 +245,6 @@ class MemoryRoot(FloatLayout):
             sf.set_frame(d1_rate, d2_rate, k, self.label_size)
             base.add_widget(sf)
 
-
     def calc_y(self):
         for key in self.address_dic:
             d = self.address_dic[key][1] - self.address_dic[key][0]
