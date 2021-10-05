@@ -72,6 +72,20 @@ class RegisterArea(Widget):
         self.text = text
         self.label_size = label_size
 
+class StackFrame(Widget):
+    y_a = NumericProperty(0)
+    y_b = NumericProperty(0)
+    text = StringProperty("")
+    label_size = NumericProperty(0.02)
+    def __init__(self, **kwargs):
+        super(StackFrame, self).__init__(**kwargs)
+    
+    def set_frame(self, y1, y2, text, label_size):
+        self.y_a = y1
+        self.y_b = y2
+        self.text = text
+        self.label_size = label_size
+
 class NoneArea(SectionArea):
     memory_height = NumericProperty()
     def __init__(self, **kwargs):
@@ -192,10 +206,12 @@ class MemoryRoot(FloatLayout):
         self.meminfo = meminfo
         self.set_memory()
         self.set_regs()
+        self.set_frames()
 
     def back(self):
         self.set_memory()
         self.set_regs()
+        self.set_frames()
 
     def set_regs(self):
         regs = self.meminfo.regs
@@ -213,6 +229,32 @@ class MemoryRoot(FloatLayout):
                 d_rate = self.top_dic[k] - d_address / (v[1] - v[0]) * self.y_rate_dic[k]
                 ra.set_point(d_rate, "rsp", self.label_size)
                 base.add_widget(ra)
+
+    def set_frames(self):
+        print('a')
+        frames = self.meminfo.frames
+        base = self.sm.ids['base_area']
+        stack_start = self.address_dic['stack'][0]
+        stack_end = self.address_dic['stack'][1]
+        stack_size = stack_end - stack_start
+        for k, v in frames.items():
+            print(k)
+            sf = StackFrame()
+            print('b')
+            print(v)
+            d1_address = v[0] - stack_start
+            d2_address = v[1] - stack_start
+            print(d1_address)
+            print(d2_address)
+            d1_rate = self.top_dic['stack'] - d1_address / stack_size * self.y_rate_dic['stack']
+            d2_rate = self.top_dic['stack'] - d2_address / stack_size * self.y_rate_dic['stack']
+            print(d1_rate)
+            print(d2_rate)
+            sf.set_frame(d1_rate, d2_rate, k, self.label_size)
+            print('c')
+            base.add_widget(sf)
+            print('d')
+
 
     def calc_y(self):
         for key in self.address_dic:
