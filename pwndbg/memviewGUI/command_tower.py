@@ -19,14 +19,16 @@ class MemInfo:
     libc            = [0x7ffff7ddb000, 0x7ffff7f9c000]
     ld              = [0x7ffff7fd2000, 0x7ffff7ffe000]
     stack           = [0x7ffffffde000, 0x7ffffffff000]
+    regs            = {"rip":0x555555555080}
 
 
 if __name__ == '__main__':
     app = memGUI.MemoryApp()
+    app.run()
     #app.set_meminfo(meminfo)
-    th_app = threading.Thread(target=memGUI.app_run, args=(app,))
-    th_app.start()
+    #th_app = threading.Thread(target=memGUI.app_run, args=(app,))
+    #th_app.start()
 
-    time.sleep(1)
-    meminfo = MemInfo()
-    app.set_address(meminfo)
+    #time.sleep(1)
+    #meminfo = MemInfo()
+    #app.set_address(meminfo)
