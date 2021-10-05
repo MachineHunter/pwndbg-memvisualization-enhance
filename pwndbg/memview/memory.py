@@ -7,13 +7,14 @@ import gdb
 from elftools.elf.elffile import ELFFile
 import pwndbg.vmmap
 import pwndbg.regs
+import pwndbg.arch
 
 
 class MemInfo:
     """
     page = [<start>, <end>]
     regs = {"rax":<int value>, ...}
-    frames = {"func name":<start addr>, ...}
+    frames = {"func name":[<start>,<end>], ...}  <= "<start> < <end>"
     """
     executable      = [-1, -1]
     text_section    = [-1, -1]
@@ -144,9 +145,17 @@ def get_regs(meminfo):
 can retrive
 - all stack frame start addr
 """
+"""
+How Stack Works
+- it expands from large address to small address
+  (new value is pushed to the least address)
+- when main=[<start>,<end>], "<start> < <end>"
+  so <start> is the top, and <end> is the bottom address
+"""
 def get_frames(meminfo):
     all_frames = []
     current_frame = gdb.newest_frame()
+    frame_endaddrs = {}
 
     # get all stack frames
     while True:
@@ -168,4 +177,14 @@ def get_frames(meminfo):
                     # somehow rbp points wrong address on __libc_start_main
                     continue
                 else:
-                    meminfo.frames[f.name()] = int(f.read_register(pwndbg.regs.frame))
+                    frame_endaddrs[f.name()] = int(f.read_register(pwndbg.regs.frame))
+
+    # calculate end address of each frame
+    cnt = 0
+    for k,v in frame_endaddrs.items():
+        if cnt!=0:
+            startaddr = list(frame_endaddrs.values())[cnt-1] + pwndbg.arch.ptrsize
+        else:
+            startaddr = meminfo.stack[0]
+        meminfo.frames[k] = [startaddr, v]
+        cnt+=1
