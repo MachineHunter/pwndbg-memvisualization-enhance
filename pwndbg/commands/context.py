@@ -32,6 +32,7 @@ import pwndbg.vmmap
 import pwndbg.memview.memory
 import pwndbg.memviewGUI.memGUI
 import pwndbg.memviewGUI.initGUI
+import pwndbg.memview.memview_heap
 from pwndbg.color import message
 from pwndbg.color import theme
 
@@ -557,8 +558,28 @@ def context_memview(target=sys.stdout, with_banner=False, width=None):
     app = pwndbg.memviewGUI.initGUI.get_instance()
     meminfo = pwndbg.memview.memory.get()
     pwndbg.memviewGUI.memGUI.set_address(app, meminfo)
-    return ""
 
+    heapstring = pwndbg.memview.memview_heap.get(meminfo.heap)# process string to print for heap
+    result.append("executable %s-%s" % (hex(meminfo.executable[0]), hex(meminfo.executable[1])))
+    result.append("   .text   %s-%s" % (hex(meminfo.text_section[0]), hex(meminfo.text_section[1])))
+    result.append("   .plt    %s-%s" % (hex(meminfo.plt_section[0]), hex(meminfo.plt_section[1])))
+    result.append("   .got    %s-%s" % (hex(meminfo.got_section[0]), hex(meminfo.got_section[1])))
+    result.append("   .pltgot %s-%s" % (hex(meminfo.pltgot_section[0]), hex(meminfo.pltgot_section[1])))
+    result.append("   .gotplt %s-%s" % (hex(meminfo.gotplt_section[0]), hex(meminfo.gotplt_section[1])))
+    result.append("   .data   %s-%s" % (hex(meminfo.data_section[0]), hex(meminfo.data_section[1])))
+    result.append("   .bss    %s-%s" % (hex(meminfo.bss_section[0]), hex(meminfo.bss_section[1])))
+    result.append("libc       %s-%s" % (hex(meminfo.libc[0]), hex(meminfo.libc[1])))
+    result.append("ld         %s-%s" % (hex(meminfo.ld[0]), hex(meminfo.ld[1])))
+    result.append("stack      %s-%s" % (hex(meminfo.stack[0]), hex(meminfo.stack[1])))
+    result.append("---------------------------regs---------------------------------")
+    for k,v in meminfo.regs.items():
+        result.append(k+" : "+hex(v))
+    result.append("---------------------------frames-------------------------------")
+    for k,v in meminfo.frames.items():
+        result.append(k+" : "+hex(v))
+    result.append("---------------------------heap-------------------------------")
+    result.append(heapstring)
+    return result
 
 backtrace_lines = pwndbg.config.Parameter('context-backtrace-lines', 8, 'number of lines to print in the backtrace context')
 backtrace_frame_label = theme.Parameter('backtrace-frame-label', 'f ', 'frame number label for backtrace')

@@ -8,7 +8,6 @@ from elftools.elf.elffile import ELFFile
 import pwndbg.vmmap
 import pwndbg.regs
 
-
 class MemInfo:
     """
     page = [<start>, <end>]
