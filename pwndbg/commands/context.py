@@ -557,8 +557,8 @@ def context_memview(target=sys.stdout, with_banner=False, width=None):
     app = pwndbg.memviewGUI.initGUI.get_instance()
     meminfo = pwndbg.memview.memory.get()
     pwndbg.memviewGUI.memGUI.set_address(app, meminfo)
-    # for k,v in meminfo.frames.items():
-        # print(k + ":" + hex(v[0])+"-"+hex(v[1]))
+    for k,v in meminfo.frames.items():
+        print(k + ":" + hex(v[0])+"-"+hex(v[1]))
     return ""
 
 

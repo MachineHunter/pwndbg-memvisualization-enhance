@@ -156,6 +156,7 @@ def get_frames(meminfo):
     all_frames = []
     current_frame = gdb.newest_frame()
     frame_endaddrs = {}
+    newest_function_startaddr = -1
 
     # get all stack frames
     while True:
@@ -170,14 +171,21 @@ def get_frames(meminfo):
         current_frame = candidate
 
     # get start address of each frames
-    for f in all_frames:
+    for i,f in enumerate(all_frames):
         if f.is_valid():
+            # somehow rbp points wrong address on __libc_start_main
+            if f.name()=="__libc_start_main" or f.name()=="_start":
+                continue
+            # when "mov rbp, rsp", end is updated but latest function will not be shown yet
             if f.older()!=None and f.older().read_register(pwndbg.regs.frame)!=f.read_register(pwndbg.regs.frame):
-                if f.name()=="__libc_start_main":
-                    # somehow rbp points wrong address on __libc_start_main
-                    continue
-                else:
-                    frame_endaddrs[f.name()] = int(f.read_register(pwndbg.regs.frame))
+                frame_endaddrs[f.name()] = int(f.read_register(pwndbg.regs.frame))
+            if i==0:
+                # when "sub rsp, ...", this is not leaf function and start is updated
+                if pwndbg.regs.sp!=f.read_register(pwndbg.regs.frame):
+                    newest_function_startaddr = pwndbg.regs.sp
+                # when no "sub rsp, ...", this is leaf function
+                if pwndbg.regs.sp==f.read_register(pwndbg.regs.frame):
+                    newest_function_startaddr = -1
 
     # calculate end address of each frame
     cnt = 0
@@ -185,6 +193,11 @@ def get_frames(meminfo):
         if cnt!=0:
             startaddr = list(frame_endaddrs.values())[cnt-1] + pwndbg.arch.ptrsize
         else:
-            startaddr = meminfo.stack[0]
-        meminfo.frames[k] = [startaddr, v]
+            # when leaf function (red zone)
+            if newest_function_startaddr==-1:
+                startaddr = v - 0x128
+            else:
+                startaddr = newest_function_startaddr
+        if(startaddr!=v):
+            meminfo.frames[k] = [startaddr, v]
         cnt+=1
