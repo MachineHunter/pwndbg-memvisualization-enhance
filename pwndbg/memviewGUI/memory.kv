@@ -183,7 +183,8 @@ MemoryRoot:
             pos_hint: {'x':0.12, 'top': (root.y1 + root.y2) / 2 + root.label_size/2}
 
 <HeapConstruct>:
-    FloatLayout:size: root.size
+    FloatLayout:
+        size: root.size
         canvas.before:
 	    Color
 	        rgba: hex('#ffffff')
