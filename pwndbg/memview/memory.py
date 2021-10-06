@@ -63,6 +63,22 @@ def set(target, value):
 
 
 """
+unset <value> from the meminfo member specified by <target>
+and return updated meminfo
+"""
+def unset(target, value):
+    meminfo = get()
+    if len(meminfo.marks)<1:
+        return meminfo
+    if target=="marks":
+        if value in meminfo.marks:
+            meminfo.marks.remove(value)
+    return meminfo
+
+
+
+
+"""
 check if <addr> is valid memory address
 (check if <addr> is in between max/min address of meminfo)
 - Ex) if <addr> is -0x1, this is not valid memory address so return False
