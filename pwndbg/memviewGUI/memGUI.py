@@ -275,7 +275,7 @@ class MemoryRoot(FloatLayout):
                     m = Mark()
                     d_address = marks[i] - v[0]
                     d_rate = self.top_dic[k] - d_address / (v[1] - v[0]) * self.y_rate_dic[k]
-                    m.set_point(d_rate, "mark"+str(i + 1), self.label_size)
+                    m.set_point(d_rate, "mark"+str(i), self.label_size)
                     base.add_widget(m)
 
     def calc_y(self):
