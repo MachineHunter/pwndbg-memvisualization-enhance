@@ -289,6 +289,7 @@ class MemoryRoot(FloatLayout):
             frames = self.meminfo.frames
         elif type == "snapshot":
             frames = self.snapinfo.frames
+        print(self.address_dic)
         base = self.sm.ids['base_area']
         stack_start = self.address_dic['stack'][0]
         stack_end = self.address_dic['stack'][1]
