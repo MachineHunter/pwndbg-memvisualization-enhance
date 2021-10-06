@@ -34,6 +34,7 @@ if __name__ == '__main__':
     time.sleep(1)
     meminfo = MemInfo()
     app.set_address(meminfo)
+    
     print('a')
     input()
     meminfo = MemInfo()
