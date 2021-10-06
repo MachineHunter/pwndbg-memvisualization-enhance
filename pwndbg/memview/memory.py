@@ -12,9 +12,10 @@ from pwndbg.memview.memview_heap import get_main_arena, get_top_chunk, get_mallo
 
 class MemInfo:
     """
-    page = [<start>, <end>]
-    regs = {"rax":<int value>, ...}
+    region = [<start>, <end>]
+    regs   = {"rax":<int value>, ...}
     frames = {"func name":[<start>,<end>], ...}  <= "<start> < <end>"
+    marks  = [<addr1>, <addr2>, ...]
     """
     executable      = [-1, -1]
     text_section    = [-1, -1]
@@ -27,6 +28,8 @@ class MemInfo:
     libc            = [-1, -1]
     ld              = [-1, -1]
     stack           = [-1, -1]
+    stack_used      = [-1, -1]
+    stack_unused    = [-1, -1]
     heap            = [-1, -1]
     main_arena      = [-1, -1]
     top_chunk       = [-1, -1]
@@ -34,7 +37,14 @@ class MemInfo:
     free_hook       = [-1, -1]
     regs            = {}
     frames          = {}
+    marks           = []
 
+
+
+"""
+update all information of meminfo to newest
+and return the meminfo
+"""
 def get():
     meminfo = MemInfo()
     get_vmmap(meminfo)
@@ -43,6 +53,79 @@ def get():
     get_frames(meminfo)
     get_heap_info(meminfo)
     return meminfo
+
+
+
+"""
+update all information of meminfo to newest
+and set <value> to the meminfo member specified by <target>
+and return the meminfo
+"""
+def set(target, value):
+    meminfo = get()
+    if target=="marks":
+        if(is_valid_addr(meminfo, value)):
+            meminfo.marks.append(value)
+    return meminfo
+
+
+
+"""
+unset <value> from the meminfo member specified by <target>
+and return updated meminfo
+"""
+def unset(target, value):
+    meminfo = get()
+    if len(meminfo.marks)<1:
+        return meminfo
+    if target=="marks":
+        if value in meminfo.marks:
+            meminfo.marks.remove(value)
+    return meminfo
+
+
+
+
+"""
+check if <addr> is valid memory address
+(check if <addr> is in between max/min address of meminfo)
+- Ex) if <addr> is -0x1, this is not valid memory address so return False
+"""
+def is_valid_addr(meminfo, addr):
+    max_addr = meminfo.stack[1]
+    if exists(meminfo, "plt_section"):
+        min_addr = meminfo.plt_section[0]
+    elif exists(meminfo, "pltgot_section"):
+        min_addr = meminfo.pltgot_section[0]
+    else:
+        min_addr = meminfo.text_section[0]
+
+    if min_addr<=addr and addr<=max_addr:
+        return True
+    else:
+        return False
+
+
+"""
+check if given <region> exists
+(check if meminfo's <region> member doesn't have -1 as value)
+- Ex1) if <region> is "stack" it exists in meminfo so return "True" 
+- Ex2) if <region> is "hoge" it doesn't exists in meminfo so return "False"
+[!!] only eligible for region that is initialized with -1
+"""
+def exists(meminfo, region):
+    try:
+        member = getattr(meminfo, region)
+    except AttributeError:
+        return False
+    if type(member)==list:
+        if -1 in member:
+            return False
+        else:
+            return True
+    return False
+
+
 
 """
 can retrive
@@ -161,6 +244,7 @@ def get_frames(meminfo):
     all_frames = []
     current_frame = gdb.newest_frame()
     frame_endaddrs = {}
+    newest_function_startaddr = -1
 
     # get all stack frames
     while True:
@@ -175,14 +259,21 @@ def get_frames(meminfo):
         current_frame = candidate
 
     # get start address of each frames
-    for f in all_frames:
+    for i,f in enumerate(all_frames):
         if f.is_valid():
+            # somehow rbp points wrong address on __libc_start_main
+            if f.name()[0]=="_":
+                continue
+            # when "mov rbp, rsp", end is updated but latest function will not be shown yet
             if f.older()!=None and f.older().read_register(pwndbg.regs.frame)!=f.read_register(pwndbg.regs.frame):
-                if f.name()=="__libc_start_main":
-                    # somehow rbp points wrong address on __libc_start_main
-                    continue
-                else:
-                    frame_endaddrs[f.name()] = int(f.read_register(pwndbg.regs.frame))
+                frame_endaddrs[f.name()] = int(f.read_register(pwndbg.regs.frame))
+            if i==0:
+                # when "sub rsp, ...", this is not leaf function and start is updated
+                if pwndbg.regs.sp!=f.read_register(pwndbg.regs.frame):
+                    newest_function_startaddr = pwndbg.regs.sp
+                # when no "sub rsp, ...", this is leaf function
+                if pwndbg.regs.sp==f.read_register(pwndbg.regs.frame):
+                    newest_function_startaddr = -1
 
     # calculate end address of each frame
     cnt = 0
@@ -190,9 +281,19 @@ def get_frames(meminfo):
         if cnt!=0:
             startaddr = list(frame_endaddrs.values())[cnt-1] + pwndbg.arch.ptrsize
         else:
-            startaddr = meminfo.stack[0]
-        meminfo.frames[k] = [startaddr, v]
+            # when leaf function (red zone)
+            if newest_function_startaddr==-1:
+                startaddr = v - 128
+            else:
+                startaddr = newest_function_startaddr
+        if(startaddr!=v):
+            meminfo.frames[k] = [startaddr, v]
         cnt+=1
+
+    # calculate used and unused stack
+    if len(meminfo.frames)>0:
+        meminfo.stack_unused = [meminfo.stack[0], list(meminfo.frames.values())[-1][0]-8]
+        meminfo.stack_used = [list(meminfo.frames.values())[-1][0], meminfo.stack[1]]
 
 def get_heap_info(meminfo):
     get_main_arena(meminfo)

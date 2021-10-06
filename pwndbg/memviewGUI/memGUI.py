@@ -133,7 +133,7 @@ class MemoryRoot(FloatLayout):
     address_dic = DictProperty({})
     start_address = NumericProperty()
     end_address = NumericProperty()
-    areas = ListProperty(['.plt', '.plt.got', '.text', '.got', '.got.plt', '.data', '.bss', 'heap', '︙', 'libc', 'ld', 'stack'])
+    areas = ListProperty(['.plt', '.plt.got', '.text', '.got', '.got.plt', '.data', '.bss', 'heap', '︙', 'libc', 'ld', 'stack_unused', 'stack'])
     scroll_height = NumericProperty()
     y_dic = DictProperty({})
     y_rate_dic = DictProperty({})
@@ -197,23 +197,27 @@ class MemoryRoot(FloatLayout):
             elif key == 'heap':
                 if self.address_dic['heap'][1] != self.address_dic['.bss'][1]:
                     w = SectionArea()
-                    w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ee82ee', self.base_label_size/self.all_y)
+                    w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ee82ee', self.label_size)
                     base.add_widget(w)
             elif key == '︙':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], "None", self.top_dic[key], '24', '#dcdcdc', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], "None", self.top_dic[key], '24', '#dcdcdc', self.label_size)
                 base.add_widget(w)
             elif key == 'libc':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#191970', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#191970', self.label_size)
                 base.add_widget(w)
             elif key == 'ld':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#00008b', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#00008b', self.label_size)
+                base.add_widget(w)
+            elif key == 'stack_unused':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#778899', self.label_size)
                 base.add_widget(w)
             elif key == 'stack':
                 w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#0000cd', self.base_label_size/self.all_y)
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#0000cd', self.label_size)
                 base.add_widget(w)
 
     def set_address(self, meminfo):
@@ -230,6 +234,9 @@ class MemoryRoot(FloatLayout):
         self.set_frames()
         if(self.address_dic['heap'][1]!=self.address_dic['.bss'][1]):
             self.set_heap_constructs()
+
+    def update(self):
+        self.back()
 
     def set_regs(self):
         regs = self.meminfo.regs
@@ -355,7 +362,8 @@ def memInfo_turn_to_dic(meminfo):
         'heap': meminfo.heap,
         'libc': meminfo.libc,
         'ld': meminfo.ld,
-        'stack': meminfo.stack
+        'stack_unused': meminfo.stack_unused,
+        'stack': meminfo.stack_used
     }
     if dic['heap'][0] == -1:
         dic['heap'][0] = dic['.bss'][1]
