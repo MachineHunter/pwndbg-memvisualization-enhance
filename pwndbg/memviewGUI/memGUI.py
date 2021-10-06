@@ -222,7 +222,6 @@ class MemoryRoot(FloatLayout):
         self.set_regs()
         self.set_frames()
         if(self.address_dic['heap'][1]!=self.address_dic['.bss'][1]):
-            print("wtf")
             self.set_heap_constructs()
 
     def back(self):
