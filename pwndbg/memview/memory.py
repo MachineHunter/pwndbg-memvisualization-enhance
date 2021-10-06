@@ -27,6 +27,8 @@ class MemInfo:
     libc            = [-1, -1]
     ld              = [-1, -1]
     stack           = [-1, -1]
+    stack_used      = [-1, -1]
+    stack_unused    = [-1, -1]
     heap            = [-1, -1]
     regs            = {}
     frames          = {}
@@ -201,3 +203,8 @@ def get_frames(meminfo):
         if(startaddr!=v):
             meminfo.frames[k] = [startaddr, v]
         cnt+=1
+
+    # calculate used and unused stack
+    if len(meminfo.frames)>0:
+        meminfo.stack_unused = [meminfo.stack[0], list(meminfo.frames.values())[-1][0]-8]
+        meminfo.stack_used = [list(meminfo.frames.values())[-1][0], meminfo.stack[1]]
