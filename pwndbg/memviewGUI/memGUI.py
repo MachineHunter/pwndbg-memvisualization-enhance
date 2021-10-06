@@ -165,12 +165,10 @@ class MemoryRoot(FloatLayout):
         self.y_rate_dic = {}
         self.top_dic = {}
         if t == 'realtime':
-            print(t)
             self.sm = StartMemory()
             address_dic = self.address_dic
             #self.address_dic, self.other_dic = memInfo_turn_to_dic(self.meminfo)
         elif t == 'snapshot':
-            print(t)
             self.sm = SnapMemory()
             address_dic = self.address_dic_snap
             #self.address_dic, self.other_dic = memInfo_turn_to_dic(self.snapinfo)
@@ -241,7 +239,6 @@ class MemoryRoot(FloatLayout):
 
     def set_address(self, meminfo):
         self.address_dic, self.other_dic = memInfo_turn_to_dic(meminfo)
-        #self.meminfo = copy.deepcopy(meminfo)
         self.set_memory("realtime")
         self.set_regs("realtime")
         self.set_frames("realtime")
@@ -258,12 +255,6 @@ class MemoryRoot(FloatLayout):
             #print("There is no snapshot.")
             pass
         else:
-            print('real')
-            print(self.address_dic)
-            print(self.other_dic)
-            print('snap')
-            print(self.address_dic_snap)
-            print(self.other_dic_snap)
             self.set_memory("snapshot")
             self.set_regs("snapshot")
             self.set_frames("snapshot")
@@ -339,7 +330,6 @@ class MemoryRoot(FloatLayout):
         elif t == 'snapshot':
             marks = self.other_dic_snap["marks"]
             address_dic = self.address_dic_snap
-        marks = self.other_dic["marks"]
         base = self.sm.ids['base_area']
         for i in range(len(marks)):
             for k, v in address_dic.items():
