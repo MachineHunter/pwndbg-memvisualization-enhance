@@ -176,7 +176,7 @@ def get_frames(meminfo):
     for i,f in enumerate(all_frames):
         if f.is_valid():
             # somehow rbp points wrong address on __libc_start_main
-            if f.name()=="__libc_start_main" or f.name()=="_start":
+            if f.name()[0]=="_":
                 continue
             # when "mov rbp, rsp", end is updated but latest function will not be shown yet
             if f.older()!=None and f.older().read_register(pwndbg.regs.frame)!=f.read_register(pwndbg.regs.frame):
