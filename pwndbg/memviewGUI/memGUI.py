@@ -149,6 +149,8 @@ class MemoryRoot(FloatLayout):
         super(MemoryRoot, self).__init__(**kwargs)
     
     def set_memory(self):
+        if not App.get_running_app().update_enable:
+            return
         self.all_y = 0
         self.address_dic = memInfo_turn_to_dic(self.meminfo)
         self.calc_y()
@@ -306,7 +308,17 @@ class MemoryRoot(FloatLayout):
         self.set_regs()
         self.set_frames()
         self.set_marks()
-
+    
+    def on_click_freeze_button(self, type_):
+        # stop/playのボタンが押された時に発動する関数
+        # playが押されたら、updateを開始/stopなら停止
+        # 管理する変数は、appのインスタンスに持たせた.(layoutのupdateでこのインスタンスが消えるかも?と思ったので.kivyのライフサイクルまだよくわかってないもので..)
+        # print(App.get_running_app().update_enable, type_)
+        if type_ == "play":
+            App.get_running_app().set_mode(True)
+        else:
+            App.get_running_app().set_mode(False)
+            
     def update(self):
         self.back()
 
@@ -382,10 +394,14 @@ class MemoryApp(App):
     def __init__(self, **kwargs):
         super(MemoryApp, self).__init__(**kwargs)
         self.title = 'Memory Visualizer'
+        self.update_enable = True
 
     def build(self):
         self.rootWidget = MemoryRoot()
         return self.rootWidget
+
+    def set_mode(self, b):
+        self.update_enable = b
 
     def set_meminfo(self, meminfo):
         self.meminfo = meminfo

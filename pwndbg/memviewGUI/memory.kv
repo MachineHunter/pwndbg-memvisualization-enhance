@@ -39,22 +39,27 @@ MemoryRoot:
             Rectangle:
                 pos: self.pos
                 size: self.size
-        Button:
+        ToggleButton:
             id: stop
-            text: 'stop'
+            group: 'freeze'
+            text: "Stop"
             #bold: True
             size_hint: (0.3, 0.1)
             font_size: 30
             pos_hint: {'x': 0.1, 'top': 0.95}
-            on_press: print(root.ids)
+            on_press: app.root.on_click_freeze_button(type_='stop')
+            on_release: setattr(self, 'state', 'down')
             
-        Button:
+        ToggleButton:
             id: continue
-            text: 'play'
+            group: 'freeze'
+            text: 'Play'
+            state: 'down'
             size_hint: (0.3, 0.1)
             font_size: 30
             pos_hint: {'x': 0.45, 'top': 0.95}
-            on_press: print(app.root.pos)
+            on_press: app.root.on_click_freeze_button(type_='play')
+            on_release: setattr(self, 'state', 'down')
 
         Button:
             id: snap
