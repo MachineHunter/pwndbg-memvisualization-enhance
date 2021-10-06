@@ -86,6 +86,18 @@ class StackFrame(Widget):
         self.text = text
         self.label_size = label_size
 
+class Mark(Widget):
+    y = NumericProperty(0)
+    text = StringProperty()
+    label_size = NumericProperty(0.02)
+    def __init__(self, **kwargs):
+        super(Mark, self).__init__(**kwargs)
+    
+    def set_point(self, y, text, label_size):
+        self.y = y
+        self.text = text
+        self.label_size = label_size
+
 class NoneArea(SectionArea):
     memory_height = NumericProperty()
     def __init__(self, **kwargs):
@@ -211,11 +223,13 @@ class MemoryRoot(FloatLayout):
         self.set_memory()
         self.set_regs()
         self.set_frames()
+        self.set_marks()
 
     def back(self):
         self.set_memory()
         self.set_regs()
         self.set_frames()
+        self.set_marks()
 
     def update(self):
         self.back()
@@ -251,6 +265,18 @@ class MemoryRoot(FloatLayout):
             d2_rate = self.top_dic['stack'] - d2_address / stack_size * self.y_rate_dic['stack']
             sf.set_frame(d1_rate, d2_rate, k, self.label_size)
             base.add_widget(sf)
+
+    def set_marks(self):
+        marks = self.meminfo.marks
+        base = self.sm.ids['base_area']
+        for i in range(len(marks)):
+            for k, v in self.address_dic.items():
+                if v[0] <= marks[i] and marks[i] <= v[1]:
+                    m = Mark()
+                    d_address = marks[i] - v[0]
+                    d_rate = self.top_dic[k] - d_address / (v[1] - v[0]) * self.y_rate_dic[k]
+                    m.set_point(d_rate, "mark"+str(i), self.label_size)
+                    base.add_widget(m)
 
     def calc_y(self):
         for key in self.address_dic:

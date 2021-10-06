@@ -69,13 +69,11 @@ def set(target, value):
 unset <value> from the meminfo member specified by <target>
 and return updated meminfo
 """
-def unset(target, value):
+def unset(target, index):
     meminfo = get()
-    if len(meminfo.marks)<1:
-        return meminfo
     if target=="marks":
-        if value in meminfo.marks:
-            meminfo.marks.remove(value)
+        if 0<=index and index<len(meminfo.marks):
+            meminfo.marks.pop(index)
     return meminfo
 
 
