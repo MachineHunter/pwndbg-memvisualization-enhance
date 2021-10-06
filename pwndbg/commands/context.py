@@ -32,6 +32,7 @@ import pwndbg.vmmap
 import pwndbg.memview.memory
 import pwndbg.memviewGUI.memGUI
 import pwndbg.memviewGUI.initGUI
+import pwndbg.memview.memview_heap
 from pwndbg.color import message
 from pwndbg.color import theme
 
@@ -562,7 +563,10 @@ def context_memview(target=sys.stdout, with_banner=False, width=None):
     # for k,v in meminfo.frames.items():
         # print(k + ":" + hex(v[0])+"-"+hex(v[1]))
     return ""
-
+  
+    #print(hex(meminfo.text_section[0]))
+    #heapstring = pwndbg.memview.memview_heap.get(meminfo.heap)# process string to print for heap
+    #print(heapstring)
 
 backtrace_lines = pwndbg.config.Parameter('context-backtrace-lines', 8, 'number of lines to print in the backtrace context')
 backtrace_frame_label = theme.Parameter('backtrace-frame-label', 'f ', 'frame number label for backtrace')
