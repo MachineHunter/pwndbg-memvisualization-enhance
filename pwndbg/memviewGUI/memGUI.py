@@ -380,7 +380,7 @@ def memInfo_turn_to_dic(meminfo):
     if dic['heap'][0] == -1:
         dic['heap'][0] = dic['.bss'][1]
         dic['heap'][1] = dic['.bss'][1]
-    regs = meminfo.regs
-    frames = meminfo.frames
-    marks = meminfo.marks
+    regs = copy.deepcopy(meminfo.regs)
+    frames = copy.deepcopy(meminfo.frames)
+    marks = copy.deepcopy(meminfo.marks)
     return dic, regs, frames, marks
