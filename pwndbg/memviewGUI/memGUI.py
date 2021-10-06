@@ -236,6 +236,7 @@ class MemoryRoot(FloatLayout):
         self.set_marks()
     
     def take_snap(self):
+        print('snap!!!')
         self.snapinfo = self.meminfo
 
     def set_snap(self):
