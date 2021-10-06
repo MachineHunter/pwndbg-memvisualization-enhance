@@ -12,9 +12,10 @@ import pwndbg.arch
 
 class MemInfo:
     """
-    page = [<start>, <end>]
-    regs = {"rax":<int value>, ...}
+    region = [<start>, <end>]
+    regs   = {"rax":<int value>, ...}
     frames = {"func name":[<start>,<end>], ...}  <= "<start> < <end>"
+    marks  = [<addr1>, <addr2>, ...]
     """
     executable      = [-1, -1]
     text_section    = [-1, -1]
@@ -32,7 +33,14 @@ class MemInfo:
     heap            = [-1, -1]
     regs            = {}
     frames          = {}
+    marks           = []
 
+
+
+"""
+update all information of meminfo to newest
+and return the meminfo
+"""
 def get():
     meminfo = MemInfo()
     get_vmmap(meminfo)
@@ -40,6 +48,79 @@ def get():
     get_regs(meminfo)
     get_frames(meminfo)
     return meminfo
+
+
+
+"""
+update all information of meminfo to newest
+and set <value> to the meminfo member specified by <target>
+and return the meminfo
+"""
+def set(target, value):
+    meminfo = get()
+    if target=="marks":
+        if(is_valid_addr(meminfo, value)):
+            meminfo.marks.append(value)
+    return meminfo
+
+
+
+"""
+unset <value> from the meminfo member specified by <target>
+and return updated meminfo
+"""
+def unset(target, value):
+    meminfo = get()
+    if len(meminfo.marks)<1:
+        return meminfo
+    if target=="marks":
+        if value in meminfo.marks:
+            meminfo.marks.remove(value)
+    return meminfo
+
+
+
+
+"""
+check if <addr> is valid memory address
+(check if <addr> is in between max/min address of meminfo)
+- Ex) if <addr> is -0x1, this is not valid memory address so return False
+"""
+def is_valid_addr(meminfo, addr):
+    max_addr = meminfo.stack[1]
+    if exists(meminfo, "plt_section"):
+        min_addr = meminfo.plt_section[0]
+    elif exists(meminfo, "pltgot_section"):
+        min_addr = meminfo.pltgot_section[0]
+    else:
+        min_addr = meminfo.text_section[0]
+
+    if min_addr<=addr and addr<=max_addr:
+        return True
+    else:
+        return False
+
+
+"""
+check if given <region> exists
+(check if meminfo's <region> member doesn't have -1 as value)
+- Ex1) if <region> is "stack" it exists in meminfo so return "True" 
+- Ex2) if <region> is "hoge" it doesn't exists in meminfo so return "False"
+[!!] only eligible for region that is initialized with -1
+"""
+def exists(meminfo, region):
+    try:
+        member = getattr(meminfo, region)
+    except AttributeError:
+        return False
+    if type(member)==list:
+        if -1 in member:
+            return False
+        else:
+            return True
+    return False
+
+
 
 """
 can retrive
