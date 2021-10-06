@@ -224,6 +224,81 @@ class MemoryRoot(FloatLayout):
         self.set_regs()
         self.set_frames()
         self.set_marks()
+    
+    def take_snap(self):
+        self.snapinfo = self.meminfo
+
+    def set_snap(self):
+        if self.snapinfo is None:
+            print("There is no snapshot.")
+        else:
+            self.meminfo = self.snapinfo
+            self.snapshot()
+
+    def snapshot(self):
+        self.all_y = 0
+        self.address_dic = memInfo_turn_to_dic(self.meminfo)
+        self.calc_y()
+        self.calc_top()
+        self.clear_widgets()
+        self.sm = SnapMemory()
+        self.sm.set_height(self.all_y)
+        self.add_widget(self.sm)
+        base = self.sm.ids['base_area']
+        self.address_dic['︙'] = [self.address_dic['heap'][1], self.address_dic['libc'][0]]
+        for key in self.address_dic:
+            text = key + "(" + str(self.address_dic[key][1] - self.address_dic[key][0]) + "bytes)"
+            if self.address_dic[key][0] == -1 and self.address_dic[key][1] == -1:
+                continue
+            if key == '.plt':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ffd700', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == '.plt.got':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ffa500', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == '.text':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff8c00', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == '.got':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#f4a460', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == '.got.plt':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff7f50', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == '.data':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff4500', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == '.bss':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff69b4', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == 'heap':
+                if self.address_dic['heap'][1] != self.address_dic['.bss'][1]:
+                    w = SectionArea()
+                    w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ee82ee', self.base_label_size/self.all_y)
+                    base.add_widget(w)
+            elif key == '︙':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], "None", self.top_dic[key], '24', '#dcdcdc', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == 'libc':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#191970', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == 'ld':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#00008b', self.base_label_size/self.all_y)
+                base.add_widget(w)
+            elif key == 'stack':
+                w = SectionArea()
+                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#0000cd', self.base_label_size/self.all_y)
+                base.add_widget(w)
 
     def back(self):
         self.set_memory()
