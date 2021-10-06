@@ -197,7 +197,7 @@ def get_frames(meminfo):
         else:
             # when leaf function (red zone)
             if newest_function_startaddr==-1:
-                startaddr = v - 0x128
+                startaddr = v - 128
             else:
                 startaddr = newest_function_startaddr
         if(startaddr!=v):
