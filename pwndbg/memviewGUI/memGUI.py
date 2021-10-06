@@ -86,6 +86,20 @@ class StackFrame(Widget):
         self.text = text
         self.label_size = label_size
 
+class HeapConstruct(Widget):
+    y1 = NumericProperty(0)
+    y2 = NumericProperty(0)
+    text = StringProperty("")
+    label_size = NumericProperty(0.02)
+    def __init__(self, **kwargs):
+        super(HeapConstruct, self).__init__(**kwargs)
+
+    def set_construct(self, y1, y2, text, label_size):
+        self.y1 = y1
+        self.y2 = y2
+        self.text = text
+        self.label_size = label_size
+
 class NoneArea(SectionArea):
     memory_height = NumericProperty()
     def __init__(self, **kwargs):
@@ -207,11 +221,16 @@ class MemoryRoot(FloatLayout):
         self.set_memory()
         self.set_regs()
         self.set_frames()
+        if(self.address_dic['heap'][1]!=self.address_dic['.bss'][1]):
+            print("wtf")
+            self.set_heap_constructs()
 
     def back(self):
         self.set_memory()
         self.set_regs()
         self.set_frames()
+        if(self.address_dic['heap'][1]!=self.address_dic['.bss'][1]):
+            self.set_heap_constructs()
 
     def set_regs(self):
         regs = self.meminfo.regs
@@ -244,6 +263,20 @@ class MemoryRoot(FloatLayout):
             d2_rate = self.top_dic['stack'] - d2_address / stack_size * self.y_rate_dic['stack']
             sf.set_frame(d1_rate, d2_rate, k, self.label_size)
             base.add_widget(sf)
+            
+    def set_heap_constructs(self):
+        base = self.sm.ids['base_area']
+        heap_start = self.address_dic['heap'][0]
+        heap_end = self.address_dic['heap'][1]
+        heap_size = heap_end - heap_start
+        # main_arena
+        hc = HeapConstruct()
+        d1_address = self.meminfo.main_arena[0] - heap_start
+        d2_address = self.meminfo.main_arena[1] - heap_start
+        d1_rate = self.top_dic['heap'] - d1_address / heap_size * self.y_rate_dic['heap']
+        d2_rate = self.top_dic['heap'] - d2_address / heap_size * self.y_rate_dic['heap']
+        hc.set_construct(d1_rate, d2_rate, 'main_arena', self.label_size)
+        base.add_widget(hc)
 
     def calc_y(self):
         for key in self.address_dic:

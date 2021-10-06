@@ -51,7 +51,7 @@ def get(heap_start_end):
 def get_main_arena(heapinfo):
     heap = pwndbg.heap.current
     heapinfo.main_arena[0] = pwndbg.symbol.address('main_arena')
-    heapinfo.main_arena[1] = heap.main_arena["max_system_mem"].address + 8 # max_system_mem is the last entry of the main arena
+    heapinfo.main_arena[1] = int(heap.main_arena["max_system_mem"].address) + 8 # max_system_mem is the last entry of the main arena
     
 def get_top_chunk(heapinfo):
     allocator = pwndbg.heap.current
