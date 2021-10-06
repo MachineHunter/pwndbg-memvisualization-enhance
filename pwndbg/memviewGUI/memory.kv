@@ -189,3 +189,20 @@ MemoryRoot:
             color: '#ffffff'
             size_hint: (0.1, root.label_size)
             pos_hint: {'x':0.12, 'top': (root.y1 + root.y2) / 2 + root.label_size/2}
+
+
+<Mark>:
+    FloatLayout:
+        size: root.size
+        canvas.before:
+            Color:
+                rgba: hex('#000000')
+            Line:
+                points: [root.size[0]*0.07, root.size[1]*root.y, root.size[0]*0.6, root.size[1]*root.y, root.size[0]*0.63, root.size[1]*root.y]
+                width: 1
+        Label:
+            text: root.text
+            font_size: "18"
+            color: '#000000'
+            size_hint: (0.05, root.label_size)
+            pos_hint: {'x':0.01, 'top': root.y + root.label_size/2}
