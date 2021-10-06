@@ -3,6 +3,7 @@ import time
 import logging
 from typing import List
 import numpy
+import copy
 logging.getLogger("kivy").disabled = True
 
 from kivy.config import Config
@@ -232,7 +233,7 @@ class MemoryRoot(FloatLayout):
         self.set_marks("realtime")
     
     def take_snap(self):
-        self.snapinfo = self.meminfo
+        self.snapinfo = copy.deepcopy(self.meminfo)
 
     def set_snap(self):
         if self.snapinfo is None:
