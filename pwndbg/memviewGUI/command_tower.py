@@ -22,6 +22,7 @@ class MemInfo:
     stack_used      = [0x7ffffffdf000, 0x7ffffffff000]
     regs            = {"rip":0x555555555080, "rsp":0x7fffffffe000}
     frames          = {"main":[0x7ffffffed008, 0x7ffffffff000], "aaa": [0x7ffffffdf000, 0x7ffffffed000]}
+    marks           = [0x555555557fd8, 0x555555570020]
 
 
 if __name__ == '__main__':
