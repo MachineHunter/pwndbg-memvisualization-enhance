@@ -2,6 +2,7 @@ import sys
 import time
 import memGUI
 import threading
+import copy
 
 class MemInfo:
     """
@@ -32,4 +33,9 @@ if __name__ == '__main__':
 
     time.sleep(1)
     meminfo = MemInfo()
+    app.set_address(meminfo)
+
+    input()
+    meminfo = copy.deepcopy(meminfo)
+    meminfo.marks = []
     app.set_address(meminfo)
