@@ -9,7 +9,6 @@ import pwndbg.vmmap
 import pwndbg.regs
 import pwndbg.arch
 
-
 class MemInfo:
     """
     page = [<start>, <end>]
