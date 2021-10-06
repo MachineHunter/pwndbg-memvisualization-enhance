@@ -19,7 +19,7 @@ class HeapInfo:
     top_chunk = [-1, -1]
     malloc_hook = [-1, -1]
     free_hook = [-1, -1]
-    chunks = [-1, -1]
+    #chunks = [-1, -1]
 
 def get(heap_start_end):
     """
@@ -37,14 +37,14 @@ def get(heap_start_end):
         get_main_arena(heapinfo)
         get_top_chunk(heapinfo, heap_start_end[1])
         get_malloc_free_hook(heapinfo)
-        get_main_chunks(heapinfo)
+        #get_main_chunks(heapinfo)
         heapstring = "\n".join([
             "heap        %s-%s" % (hex(heap_start_end[0]), hex(heap_start_end[1])),
             "main_arena  %s-%s" % (hex(heapinfo.main_arena[0]), hex(heapinfo.main_arena[1])),
             "top_chunk   %s-%s" % (hex(heapinfo.top_chunk[0]), hex(heapinfo.top_chunk[1])),
             "malloc_hook %s-%s" % (hex(heapinfo.malloc_hook[0]), hex(heapinfo.malloc_hook[1])),
-            "free_hook   %s-%s" % (hex(heapinfo.free_hook[0]), hex(heapinfo.free_hook[1])),
-            "chunks      %s" % ([hex(addr) for addr in heapinfo.chunks[0]])
+            "free_hook   %s-%s" % (hex(heapinfo.free_hook[0]), hex(heapinfo.free_hook[1]))
+            #"chunks      %s" % ([hex(addr) for addr in heapinfo.chunks[0]])
             ])
         return heapstring
 
@@ -53,10 +53,10 @@ def get_main_arena(heapinfo):
     heapinfo.main_arena[0] = pwndbg.symbol.address('main_arena')
     heapinfo.main_arena[1] = heap.main_arena["max_system_mem"].address + 8 # max_system_mem is the last entry of the main arena
     
-def get_top_chunk(heapinfo, heap_end):
+def get_top_chunk(heapinfo):
     allocator = pwndbg.heap.current
     heapinfo.top_chunk[0] = allocator.get_arena()["top"] 
-    heapinfo.top_chunk[1] = heap_end
+    heapinfo.top_chunk[1] = heapinfo.heap[1]
 
 def get_malloc_free_hook(heapinfo):
     heapinfo.malloc_hook[0] = pwndbg.symbol.address('__malloc_hook')

@@ -8,6 +8,7 @@ from elftools.elf.elffile import ELFFile
 import pwndbg.vmmap
 import pwndbg.regs
 import pwndbg.arch
+from pwndbg.memview.memview_heap import get_main_arena, get_top_chunk, get_malloc_free_hook
 
 class MemInfo:
     """
@@ -27,6 +28,10 @@ class MemInfo:
     ld              = [-1, -1]
     stack           = [-1, -1]
     heap            = [-1, -1]
+    main_arena      = [-1, -1]
+    top_chunk       = [-1, -1]
+    malloc_hook     = [-1, -1]
+    free_hook       = [-1, -1]
     regs            = {}
     frames          = {}
 
@@ -36,6 +41,7 @@ def get():
     get_elfheader(meminfo)
     get_regs(meminfo)
     get_frames(meminfo)
+    get_heap_info(meminfo)
     return meminfo
 
 """
@@ -187,3 +193,8 @@ def get_frames(meminfo):
             startaddr = meminfo.stack[0]
         meminfo.frames[k] = [startaddr, v]
         cnt+=1
+
+def get_heap_info(meminfo):
+    get_main_arena(meminfo)
+    get_top_chunk(meminfo)
+    get_malloc_free_hook(meminfo)
