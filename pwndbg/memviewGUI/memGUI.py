@@ -308,7 +308,7 @@ def memInfo_turn_to_dic(meminfo):
         'libc': meminfo.libc,
         'ld': meminfo.ld,
         'stack_unused': meminfo.stack_unused,
-        'stack': meminfo.stack
+        'stack': meminfo.stack_used
     }
     if dic['heap'][0] == -1:
         dic['heap'][0] = dic['.bss'][1]
