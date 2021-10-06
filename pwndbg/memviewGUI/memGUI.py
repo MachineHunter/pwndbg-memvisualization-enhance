@@ -257,7 +257,9 @@ class MemoryRoot(FloatLayout):
         for k, v in frames.items():
             sf = StackFrame()
             d1_address = v[0] - stack_start
+            #print(hex(d1_address))
             d2_address = v[1] - stack_start
+            #print(hex(d2_address))
             d1_rate = self.top_dic['stack'] - d1_address / stack_size * self.y_rate_dic['stack']
             d2_rate = self.top_dic['stack'] - d2_address / stack_size * self.y_rate_dic['stack']
             sf.set_frame(d1_rate, d2_rate, k, self.label_size)
@@ -265,17 +267,35 @@ class MemoryRoot(FloatLayout):
             
     def set_heap_constructs(self):
         base = self.sm.ids['base_area']
+        libc_start = self.address_dic['libc'][0]
+        libc_end = self.address_dic['libc'][1]
+        libc_size = libc_end - libc_start
+        # main_arena
+        hc_main_arena = HeapConstruct()
+        d1_address = self.meminfo.main_arena[0] - libc_start
+        #print(hex(d1_address))
+        d2_address = self.meminfo.main_arena[1] - libc_start
+        #print(hex(d2_address))
+        d1_rate = self.top_dic['libc'] - d1_address / libc_size * self.y_rate_dic['libc']
+        d2_rate = self.top_dic['libc'] - d2_address / libc_size * self.y_rate_dic['libc'] 
+        hc_main_arena.set_construct(d1_rate, d2_rate, 'main_arena', self.label_size)
+        base.add_widget(hc_main_arena
+                ) 
         heap_start = self.address_dic['heap'][0]
         heap_end = self.address_dic['heap'][1]
         heap_size = heap_end - heap_start
-        # main_arena
-        hc = HeapConstruct()
-        d1_address = self.meminfo.main_arena[0] - heap_start
-        d2_address = self.meminfo.main_arena[1] - heap_start
+
+        # top_chunk 
+        hc_top_chunk = HeapConstruct()
+        #print(hex(self.meminfo.top_chunk[0]), hex(self.meminfo.top_chunk[1])) 
+        d1_address = self.meminfo.top_chunk[0] - heap_start 
+        #print(d1_address) 
+        d2_address = self.meminfo.top_chunk[1] - heap_start
+        #print(d2_address)
         d1_rate = self.top_dic['heap'] - d1_address / heap_size * self.y_rate_dic['heap']
         d2_rate = self.top_dic['heap'] - d2_address / heap_size * self.y_rate_dic['heap']
-        hc.set_construct(d1_rate, d2_rate, 'main_arena', self.label_size)
-        base.add_widget(hc)
+        hc_top_chunk.set_construct(d1_rate, d2_rate, 'top_chunk', self.label_size)
+        base.add_widget(hc_top_chunk)
 
     def calc_y(self):
         for key in self.address_dic:

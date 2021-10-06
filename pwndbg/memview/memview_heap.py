@@ -55,7 +55,7 @@ def get_main_arena(heapinfo):
     
 def get_top_chunk(heapinfo):
     allocator = pwndbg.heap.current
-    heapinfo.top_chunk[0] = allocator.get_arena()["top"] 
+    heapinfo.top_chunk[0] = int(allocator.get_arena()["top"]) 
     heapinfo.top_chunk[1] = heapinfo.heap[1]
 
 def get_malloc_free_hook(heapinfo):
