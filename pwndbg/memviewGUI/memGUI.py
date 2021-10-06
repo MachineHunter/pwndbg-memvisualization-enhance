@@ -230,7 +230,8 @@ class MemoryRoot(FloatLayout):
 
     def set_snap(self):
         if self.snapinfo is None:
-            print("There is no snapshot.")
+            #print("There is no snapshot.")
+            pass
         else:
             self.meminfo = self.snapinfo
             self.snapshot()
