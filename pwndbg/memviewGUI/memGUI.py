@@ -252,6 +252,18 @@ class MemoryRoot(FloatLayout):
             sf.set_frame(d1_rate, d2_rate, k, self.label_size)
             base.add_widget(sf)
 
+    def set_marks(self):
+        marks = self.meminfo.marks
+        base = self.sm.ids['base_area']
+        for i in range(len(marks)):
+            for k, v in self.address_dic.items():
+                if v[0] <= marks[i] and marks[i] <= v[1]:
+                    ra = RegisterArea()
+                    d_address = marks[i] - v[0]
+                    d_rate = self.top_dic[k] - d_address / (v[1] - v[0]) * self.y_rate_dic[k]
+                    ra.set_point(d_rate, "mark"+str(i + 1), self.label_size)
+                    base.add_widget(ra)
+
     def calc_y(self):
         for key in self.address_dic:
             d = self.address_dic[key][1] - self.address_dic[key][0]
