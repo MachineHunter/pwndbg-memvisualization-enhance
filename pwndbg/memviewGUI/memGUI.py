@@ -148,14 +148,18 @@ class MemoryRoot(FloatLayout):
     def __init__(self, **kwargs):
         super(MemoryRoot, self).__init__(**kwargs)
     
-    def set_memory(self):
+    def set_memory(self, type):
+        self.clear_widgets()
+        if type == 'realtime':
+            self.sm = StartMemory()
+            self.address_dic = memInfo_turn_to_dic(self.meminfo)
+        elif type == 'snapshot':
+            self.sm = SnapMemory()
+            self.address_dic = memInfo_turn_to_dic(self.snapinfo)
         self.all_y = 0
-        self.address_dic = memInfo_turn_to_dic(self.meminfo)
         self.calc_y()
         self.calc_top()
         self.label_size = self.base_label_size/self.all_y
-        self.clear_widgets()
-        self.sm = StartMemory()
         self.sm.set_height(self.all_y)
         self.add_widget(self.sm)
         base = self.sm.ids['base_area']
@@ -220,10 +224,10 @@ class MemoryRoot(FloatLayout):
 
     def set_address(self, meminfo):
         self.meminfo = meminfo
-        self.set_memory()
-        self.set_regs()
-        self.set_frames()
-        self.set_marks()
+        self.set_memory("realtime")
+        self.set_regs("realtime")
+        self.set_frames("realtime")
+        self.set_marks("realtime")
     
     def take_snap(self):
         self.snapinfo = self.meminfo
@@ -233,85 +237,25 @@ class MemoryRoot(FloatLayout):
             #print("There is no snapshot.")
             pass
         else:
-            self.meminfo = self.snapinfo
-            self.snapshot()
-
-    def snapshot(self):
-        self.all_y = 0
-        self.address_dic = memInfo_turn_to_dic(self.meminfo)
-        self.calc_y()
-        self.calc_top()
-        self.clear_widgets()
-        self.sm = SnapMemory()
-        self.sm.set_height(self.all_y)
-        self.add_widget(self.sm)
-        base = self.sm.ids['base_area']
-        self.address_dic['︙'] = [self.address_dic['heap'][1], self.address_dic['libc'][0]]
-        for key in self.address_dic:
-            text = key + "(" + str(self.address_dic[key][1] - self.address_dic[key][0]) + "bytes)"
-            if self.address_dic[key][0] == -1 and self.address_dic[key][1] == -1:
-                continue
-            if key == '.plt':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ffd700', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == '.plt.got':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ffa500', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == '.text':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff8c00', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == '.got':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#f4a460', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == '.got.plt':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff7f50', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == '.data':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff4500', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == '.bss':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ff69b4', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == 'heap':
-                if self.address_dic['heap'][1] != self.address_dic['.bss'][1]:
-                    w = SectionArea()
-                    w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#ee82ee', self.base_label_size/self.all_y)
-                    base.add_widget(w)
-            elif key == '︙':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], "None", self.top_dic[key], '24', '#dcdcdc', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == 'libc':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#191970', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == 'ld':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#00008b', self.base_label_size/self.all_y)
-                base.add_widget(w)
-            elif key == 'stack':
-                w = SectionArea()
-                w.set_config(self.y_rate_dic[key], self.address_dic[key], text, self.top_dic[key], '24', '#0000cd', self.base_label_size/self.all_y)
-                base.add_widget(w)
+            self.set_memory("snapshot")
+            self.set_regs("snapshot")
+            self.set_frames("snapshot")
+            self.set_marks("snapshot")
 
     def back(self):
-        self.set_memory()
-        self.set_regs()
-        self.set_frames()
-        self.set_marks()
+        self.set_memory("realtime")
+        self.set_regs("realtime")
+        self.set_frames("realtime")
+        self.set_marks("realtime")
 
     def update(self):
         self.back()
 
-    def set_regs(self):
-        regs = self.meminfo.regs
+    def set_regs(self, type):
+        if type == "realtime":
+            regs = self.meminfo.regs
+        elif type == "snapshot":
+            regs = self.snapinfo.regs
         base = self.sm.ids['base_area']
         for k, v in self.address_dic.items():
             if v[0] <= regs["rip"] and regs["rip"] <= v[1]:
@@ -327,8 +271,11 @@ class MemoryRoot(FloatLayout):
                 ra.set_point(d_rate, "rsp", self.label_size)
                 base.add_widget(ra)
 
-    def set_frames(self):
-        frames = self.meminfo.frames
+    def set_frames(self, type):
+        if type == "realtime":
+            frames = self.meminfo.frames
+        elif type == "snapshot":
+            frames = self.snapinfo.frames
         base = self.sm.ids['base_area']
         stack_start = self.address_dic['stack'][0]
         stack_end = self.address_dic['stack'][1]
@@ -342,8 +289,11 @@ class MemoryRoot(FloatLayout):
             sf.set_frame(d1_rate, d2_rate, k, self.label_size)
             base.add_widget(sf)
 
-    def set_marks(self):
-        marks = self.meminfo.marks
+    def set_marks(self, type):
+        if type == "realtime":
+            marks = self.meminfo.marks
+        elif type == "snapshot":
+            marks = self.snapinfo.marks
         base = self.sm.ids['base_area']
         for i in range(len(marks)):
             for k, v in self.address_dic.items():
