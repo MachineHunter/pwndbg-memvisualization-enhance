@@ -7,13 +7,14 @@ import gdb
 from elftools.elf.elffile import ELFFile
 import pwndbg.vmmap
 import pwndbg.regs
+import pwndbg.arch
 
 
 class MemInfo:
     """
     region = [<start>, <end>]
     regs   = {"rax":<int value>, ...}
-    frames = {"func name":<start addr>, ...}
+    frames = {"func name":[<start>,<end>], ...}  <= "<start> < <end>"
     marks  = [<addr1>, <addr2>, ...]
     """
     executable      = [-1, -1]
@@ -27,6 +28,8 @@ class MemInfo:
     libc            = [-1, -1]
     ld              = [-1, -1]
     stack           = [-1, -1]
+    stack_used      = [-1, -1]
+    stack_unused    = [-1, -1]
     heap            = [-1, -1]
     regs            = {}
     frames          = {}
@@ -225,9 +228,18 @@ def get_regs(meminfo):
 can retrive
 - all stack frame start addr
 """
+"""
+How Stack Works
+- it expands from large address to small address
+  (new value is pushed to the least address)
+- when main=[<start>,<end>], "<start> < <end>"
+  so <start> is the top, and <end> is the bottom address
+"""
 def get_frames(meminfo):
     all_frames = []
     current_frame = gdb.newest_frame()
+    frame_endaddrs = {}
+    newest_function_startaddr = -1
 
     # get all stack frames
     while True:
@@ -242,11 +254,38 @@ def get_frames(meminfo):
         current_frame = candidate
 
     # get start address of each frames
-    for f in all_frames:
+    for i,f in enumerate(all_frames):
         if f.is_valid():
+            # somehow rbp points wrong address on __libc_start_main
+            if f.name()[0]=="_":
+                continue
+            # when "mov rbp, rsp", end is updated but latest function will not be shown yet
             if f.older()!=None and f.older().read_register(pwndbg.regs.frame)!=f.read_register(pwndbg.regs.frame):
-                if f.name()=="__libc_start_main":
-                    # somehow rbp points wrong address on __libc_start_main
-                    continue
-                else:
-                    meminfo.frames[f.name()] = int(f.read_register(pwndbg.regs.frame))
+                frame_endaddrs[f.name()] = int(f.read_register(pwndbg.regs.frame))
+            if i==0:
+                # when "sub rsp, ...", this is not leaf function and start is updated
+                if pwndbg.regs.sp!=f.read_register(pwndbg.regs.frame):
+                    newest_function_startaddr = pwndbg.regs.sp
+                # when no "sub rsp, ...", this is leaf function
+                if pwndbg.regs.sp==f.read_register(pwndbg.regs.frame):
+                    newest_function_startaddr = -1
+
+    # calculate end address of each frame
+    cnt = 0
+    for k,v in frame_endaddrs.items():
+        if cnt!=0:
+            startaddr = list(frame_endaddrs.values())[cnt-1] + pwndbg.arch.ptrsize
+        else:
+            # when leaf function (red zone)
+            if newest_function_startaddr==-1:
+                startaddr = v - 128
+            else:
+                startaddr = newest_function_startaddr
+        if(startaddr!=v):
+            meminfo.frames[k] = [startaddr, v]
+        cnt+=1
+
+    # calculate used and unused stack
+    if len(meminfo.frames)>0:
+        meminfo.stack_unused = [meminfo.stack[0], list(meminfo.frames.values())[-1][0]-8]
+        meminfo.stack_used = [list(meminfo.frames.values())[-1][0], meminfo.stack[1]]

@@ -46,7 +46,7 @@ MemoryRoot:
             size_hint: (0.3, 0.1)
             font_size: 30
             pos_hint: {'x': 0.1, 'top': 0.95}
-            on_press: print(app.root.ids['start_memory'].ids)
+            on_press: print(root.ids)
             
         Button:
             id: continue
@@ -71,6 +71,44 @@ MemoryRoot:
             font_size: 30
             pos_hint: {'x': 0.1, 'top': 0.65}
             on_press: print(app.root.pos)
+        
+        Button:
+            id: view_snap
+            text: 'Update'
+            size_hint: (0.8, 0.1)
+            font_size: 30
+            pos_hint: {'x': 0.1, 'top': 0.2}
+            on_press: app.root.update()
+
+<SnapMemory>:
+    orientation: 'horizontal'
+    size: root.size
+    ScrollView:
+        id: scroll_view
+        size_hint_x: 0.7
+        scroll_type: ['bars']
+        bar_width: 16
+        FloatLayout:
+            id: base_area
+            size_hint_y: root.scroll_height / root.height
+
+    FloatLayout:
+        size_hint_x: 0.3
+        canvas.before:
+            Color:
+                rgba: hex('#fffacd')
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Button:
+            id: stop
+            text: 'Back'
+            bold: True
+            size_hint: (0.2, 0.1)
+            font_size: 50
+            pos_hint: {'x': 0.1, 'top': 0.95}
+            on_press: print(app.root.ids['start_memory'].ids)
+
 
 <NoneArea>:
     FloatLayout:
@@ -113,3 +151,41 @@ MemoryRoot:
             color: root.label_color
             size_hint: (root.label_size[0], root.label_size[1])
             pos_hint: {'x': root.label_x, 'top': root.top-root.y+root.label_size[1]}
+
+<RegisterArea>:
+    FloatLayout:
+        size: root.size
+        canvas.before:
+            Color:
+                rgba: hex('#000000')
+            Line:
+                points: [root.size[0]*0.07, root.size[1]*root.y, root.size[0]*0.6, root.size[1]*root.y, root.size[0]*0.63, root.size[1]*root.y]
+                width: 1
+        Label:
+            text: root.text
+            font_size: "18"
+            color: '#000000'
+            size_hint: (0.05, root.label_size)
+            pos_hint: {'x':0.02, 'top': root.y + root.label_size/2}
+
+<StackFrame>:
+    FloatLayout:
+        size: root.size
+        canvas.before:
+            Color:
+                rgba: hex('#ffffff')
+            Line:
+                points: [root.size[0]*0.11, root.size[1]*root.y1, root.size[0]*0.11, root.size[1]*root.y2, root.size[0]*0.59, root.size[1]*root.y2]
+                width: 1
+            
+            Color:
+                rgba: hex('#ffffff')
+            Line:
+                points: [root.size[0]*0.11, root.size[1]*root.y1, root.size[0]*0.59, root.size[1]*root.y1, root.size[0]*0.59, root.size[1]*root.y2]
+                width: 1
+        Label:
+            text: root.text
+            font_size: "18"
+            color: '#ffffff'
+            size_hint: (0.1, root.label_size)
+            pos_hint: {'x':0.12, 'top': (root.y1 + root.y2) / 2 + root.label_size/2}

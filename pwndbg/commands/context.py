@@ -557,6 +557,10 @@ def context_memview(target=sys.stdout, with_banner=False, width=None):
     app = pwndbg.memviewGUI.initGUI.get_instance()
     meminfo = pwndbg.memview.memory.get()
     pwndbg.memviewGUI.memGUI.set_address(app, meminfo)
+    # print("used:" + hex(meminfo.stack_used[0]) + "-" + hex(meminfo.stack_used[1]))
+    # print("unused:" + hex(meminfo.stack_unused[0]) + "-" + hex(meminfo.stack_unused[1]))
+    # for k,v in meminfo.frames.items():
+        # print(k + ":" + hex(v[0])+"-"+hex(v[1]))
     return ""
 
 
