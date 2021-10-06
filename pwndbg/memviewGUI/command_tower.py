@@ -36,6 +36,6 @@ if __name__ == '__main__':
     app.set_address(meminfo)
 
     input()
-    meminfo = copy.deepcopy(meminfo)
+    meminfo = MemInfo()
     meminfo.marks = []
     app.set_address(meminfo)

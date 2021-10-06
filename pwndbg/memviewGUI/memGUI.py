@@ -1,7 +1,7 @@
 import threading
 import time
 import logging
-from typing import List
+from typing import Dict, List
 import numpy
 import copy
 logging.getLogger("kivy").disabled = True
@@ -146,19 +146,22 @@ class MemoryRoot(FloatLayout):
     all_y = NumericProperty(0)
     meminfo = ObjectProperty()
     snapinfo = ObjectProperty()
+    regs = DictProperty({})
+    frames = DictProperty({})
+    marks = ListProperty([])
     def __init__(self, **kwargs):
         super(MemoryRoot, self).__init__(**kwargs)
     
-    def set_memory(self, type):
+    def set_memory(self, t):
         if not App.get_running_app().update_enable:
             return
         self.clear_widgets()
-        if type == 'realtime':
+        if t == 'realtime':
             self.sm = StartMemory()
-            self.address_dic = memInfo_turn_to_dic(self.meminfo)
-        elif type == 'snapshot':
+            self.address_dic, self.regs, self.frames, self.marks = memInfo_turn_to_dic(self.meminfo)
+        elif t == 'snapshot':
             self.sm = SnapMemory()
-            self.address_dic = memInfo_turn_to_dic(self.snapinfo)
+            self.address_dic, self.regs, self.frames, self.marks = memInfo_turn_to_dic(self.snapinfo)
         self.all_y = 0
         self.calc_y()
         self.calc_top()
@@ -228,12 +231,12 @@ class MemoryRoot(FloatLayout):
     def set_address(self, meminfo):
         self.meminfo = meminfo
         self.set_memory("realtime")
-        self.set_regs("realtime")
-        self.set_frames("realtime")
-        self.set_marks("realtime")
+        self.set_regs()
+        self.set_frames()
+        self.set_marks()
     
     def take_snap(self):
-        self.snapinfo = copy.deepcopy(self.meminfo)
+        self.snapinfo = self.meminfo
 
     def set_snap(self):
         if self.snapinfo is None:
@@ -241,15 +244,15 @@ class MemoryRoot(FloatLayout):
             pass
         else:
             self.set_memory("snapshot")
-            self.set_regs("snapshot")
-            self.set_frames("snapshot")
-            self.set_marks("snapshot")
+            self.set_regs()
+            self.set_frames()
+            self.set_marks()
 
     def back(self):
         self.set_memory("realtime")
-        self.set_regs("realtime")
-        self.set_frames("realtime")
-        self.set_marks("realtime")
+        self.set_regs()
+        self.set_frames()
+        self.set_marks()
 
     def on_click_freeze_button(self, type_):
         # stop/playのボタンが押された時に発動する関数
@@ -264,11 +267,8 @@ class MemoryRoot(FloatLayout):
     def update(self):
         self.back()
 
-    def set_regs(self, type):
-        if type == "realtime":
-            regs = self.meminfo.regs
-        elif type == "snapshot":
-            regs = self.snapinfo.regs
+    def set_regs(self):
+        regs = self.regs
         base = self.sm.ids['base_area']
         for k, v in self.address_dic.items():
             if v[0] <= regs["rip"] and regs["rip"] <= v[1]:
@@ -284,11 +284,8 @@ class MemoryRoot(FloatLayout):
                 ra.set_point(d_rate, "rsp", self.label_size)
                 base.add_widget(ra)
 
-    def set_frames(self, type):
-        if type == "realtime":
-            frames = self.meminfo.frames
-        elif type == "snapshot":
-            frames = self.snapinfo.frames
+    def set_frames(self):
+        frames = self.frames
         base = self.sm.ids['base_area']
         stack_start = self.address_dic['stack'][0]
         stack_end = self.address_dic['stack'][1]
@@ -302,12 +299,8 @@ class MemoryRoot(FloatLayout):
             sf.set_frame(d1_rate, d2_rate, k, self.label_size)
             base.add_widget(sf)
 
-    def set_marks(self, type):
-        if type == "realtime":
-            marks = self.meminfo.marks
-        elif type == "snapshot":
-            marks = self.snapinfo.marks
-        print(marks)
+    def set_marks(self):
+        marks = self.marks
         base = self.sm.ids['base_area']
         for i in range(len(marks)):
             for k, v in self.address_dic.items():
@@ -386,4 +379,7 @@ def memInfo_turn_to_dic(meminfo):
     if dic['heap'][0] == -1:
         dic['heap'][0] = dic['.bss'][1]
         dic['heap'][1] = dic['.bss'][1]
-    return dic
+    regs = meminfo.regs
+    frames = meminfo.frames
+    marks = meminfo.marks
+    return dic, regs, frames, marks
