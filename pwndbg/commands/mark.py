@@ -26,18 +26,18 @@ def mark(address=None):
 
 # unmark
 parser = argparse.ArgumentParser(description="""
-    Unark specified address stored in meminfo.marks
-    (Usage: unmark <address>)
+    Unmark meminfo.marks of specified index
+    (Usage: unmark <index>)
     """)
-parser.add_argument("address", nargs="?", default=None, type=int, help="The address to remove from marks")
+parser.add_argument("index", nargs="?", default=None, type=int, help="The index of mark to remove")
 @pwndbg.commands.ArgparsedCommand(parser)
 @pwndbg.commands.OnlyWhenRunning
-def unmark(address=None):
+def unmark(index=None):
     """
-    Unark specified address stored in meminfo.marks
+    Unark specified index stored in meminfo.marks
     """
-    if address==None:
+    if index==None:
         return False
 
-    meminfo = pwndbg.memview.memory.unset("marks", int(address))
+    meminfo = pwndbg.memview.memory.unset("marks", int(index))
     return True
