@@ -19,6 +19,8 @@ class MemInfo:
     libc            = [0x7ffff7ddb000, 0x7ffff7f9c000]
     ld              = [0x7ffff7fd2000, 0x7ffff7ffe000]
     stack           = [0x7ffffffde000, 0x7ffffffff000]
+    regs            = {"rip":0x555555555080, "rsp":0x7fffffffe000}
+    frames          = {"main":[0x7ffffffed008, 0x7ffffffff000], "aaa": [0x7ffffffdf000, 0x7ffffffed000]}
 
 
 if __name__ == '__main__':
