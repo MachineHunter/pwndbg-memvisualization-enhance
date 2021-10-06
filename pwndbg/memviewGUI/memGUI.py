@@ -217,6 +217,9 @@ class MemoryRoot(FloatLayout):
         self.set_regs()
         self.set_frames()
 
+    def update(self):
+        self.back()
+
     def set_regs(self):
         regs = self.meminfo.regs
         base = self.sm.ids['base_area']
