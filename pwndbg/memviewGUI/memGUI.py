@@ -157,8 +157,6 @@ class MemoryRoot(FloatLayout):
         super(MemoryRoot, self).__init__(**kwargs)
     
     def set_memory(self, t):
-        if not App.get_running_app().update_enable:
-            return
         self.clear_widgets()
         self.all_y = 0
         self.y_dic = {}
@@ -167,11 +165,9 @@ class MemoryRoot(FloatLayout):
         if t == 'realtime':
             self.sm = StartMemory()
             address_dic = self.address_dic
-            #self.address_dic, self.other_dic = memInfo_turn_to_dic(self.meminfo)
         elif t == 'snapshot':
             self.sm = SnapMemory()
             address_dic = self.address_dic_snap
-            #self.address_dic, self.other_dic = memInfo_turn_to_dic(self.snapinfo)
         self.calc_y(t)
         self.calc_top()
         self.label_size = self.base_label_size/self.all_y
@@ -238,6 +234,8 @@ class MemoryRoot(FloatLayout):
                 base.add_widget(w)
 
     def set_address(self, meminfo):
+        if not App.get_running_app().update_enable:
+            return
         self.address_dic, self.other_dic = memInfo_turn_to_dic(meminfo)
         self.set_memory("realtime")
         self.set_regs("realtime")
@@ -251,7 +249,7 @@ class MemoryRoot(FloatLayout):
             self.other_dic_snap[k] = copy.deepcopy(self.other_dic[k])
 
     def set_snap(self):
-        if self.address_dic_snap is None and self.other_dic_snap is None:
+        if not(self.address_dic_snap) and not(self.other_dic_snap):
             #print("There is no snapshot.")
             pass
         else:
