@@ -35,8 +35,3 @@ if __name__ == '__main__':
     meminfo = MemInfo()
     app.set_address(meminfo)
     
-    print('a')
-    input()
-    meminfo = MemInfo()
-    meminfo.marks = []
-    app.set_address(meminfo)

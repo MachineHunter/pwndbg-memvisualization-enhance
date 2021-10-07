@@ -39,11 +39,13 @@ MemoryRoot:
             Rectangle:
                 pos: self.pos
                 size: self.size
+
         ToggleButton:
             id: stop
             group: 'freeze'
             text: "Stop"
             #bold: True
+            stete: 'normal'
             size_hint: (0.3, 0.1)
             font_size: 30
             pos_hint: {'x': 0.1, 'top': 0.95}
