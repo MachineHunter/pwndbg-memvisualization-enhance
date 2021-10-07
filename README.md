@@ -1,5 +1,7 @@
 # pwndbg-perceptor
 
+(English documentation is available [here](README_en.md): )
+
 GDBの拡張である[pwndbg](https://github.com/pwndbg/pwndbg)のforkです。初めてpwndbgを使うバイナリ入門者にとって出力される情報をわかりやすくすることでより効率的にpwndbgに使い慣れてもらったり、バイナリ解析の周辺知識を勉強/応用しやすくすることを主な目的とした拡張機能です。
 
 ## 機能概要
