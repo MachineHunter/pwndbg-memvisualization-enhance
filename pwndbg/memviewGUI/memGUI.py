@@ -1,10 +1,7 @@
-import threading
-import time
 import logging
 from typing import Dict, List
 import numpy
 import copy
-import traceback
 logging.getLogger("kivy").disabled = True
 
 from kivy.config import Config
@@ -12,15 +9,10 @@ Config.set('graphics', 'width', '1200')
 Config.set('graphics', 'height', '800')
 
 from kivy.app import App
-from kivy.uix.widget import Widget, WidgetBase
+from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.utils import get_color_from_hex
-from kivy.properties import NumericProperty, StringProperty, ListProperty, DictProperty, ObjectProperty, Property
-
-from kivy.core.text import LabelBase, DEFAULT_FONT
-from kivy.resources import resource_add_path
-
+from kivy.properties import NumericProperty, StringProperty, ListProperty, DictProperty, BooleanProperty, ObjectProperty
 
 class HelpMemory(Widget):
     pass
@@ -142,6 +134,7 @@ class MemoryRoot(FloatLayout):
     margin_y = NumericProperty(180)
     mapped_y = NumericProperty(360)
     all_y = NumericProperty(0)
+    meminfo = ObjectProperty()
     def __init__(self, **kwargs):
         super(MemoryRoot, self).__init__(**kwargs)
     
@@ -223,6 +216,7 @@ class MemoryRoot(FloatLayout):
                 base.add_widget(w)
 
     def set_address(self, meminfo):
+        self.meminfo = meminfo
         if not App.get_running_app().update_enable:
             return
         self.address_dic, self.other_dic = memInfo_turn_to_dic(meminfo)
@@ -248,6 +242,7 @@ class MemoryRoot(FloatLayout):
             self.set_marks("snapshot")
 
     def back(self):
+        App.get_running_app().set_mode(True)
         self.set_memory("realtime")
         self.set_regs("realtime")
         self.set_frames("realtime")
@@ -264,6 +259,7 @@ class MemoryRoot(FloatLayout):
             App.get_running_app().set_mode(False)
     
     def update(self):
+        self.address_dic, self.other_dic = memInfo_turn_to_dic(self.meminfo)
         self.back()
 
     def set_regs(self, t):
@@ -356,10 +352,10 @@ class MemoryRoot(FloatLayout):
 
 
 class MemoryApp(App):
+    update_enable = BooleanProperty(True)
     def __init__(self, **kwargs):
         super(MemoryApp, self).__init__(**kwargs)
         self.title = 'Memory Visualizer'
-        self.update_enable = True
 
     def build(self):
         self.rootWidget = MemoryRoot()
@@ -367,6 +363,9 @@ class MemoryApp(App):
 
     def set_mode(self, b):
         self.update_enable = b
+
+    def get_mode(self):
+        return self.update_enable
     
     def set_address(self, meminfo):
         self.rootWidget.set_address(meminfo)
@@ -380,25 +379,25 @@ def app_run(app):
 
 def memInfo_turn_to_dic(meminfo):
     dic1 = {
-        '.plt': meminfo.plt_section,
-        '.plt.got': meminfo.pltgot_section,
-        '.text': meminfo.text_section,
-        '.got': meminfo.got_section,
-        '.got.plt': meminfo.gotplt_section,
-        '.data': meminfo.data_section,
-        '.bss': meminfo.bss_section,
-        'heap': meminfo.heap,
-        'libc': meminfo.libc,
-        'ld': meminfo.ld,
-        'stack_unused': meminfo.stack_unused,
-        'stack': meminfo.stack_used
+        '.plt': copy.deepcopy(meminfo.plt_section),
+        '.plt.got': copy.deepcopy(meminfo.pltgot_section),
+        '.text': copy.deepcopy(meminfo.text_section),
+        '.got': copy.deepcopy(meminfo.got_section),
+        '.got.plt': copy.deepcopy(meminfo.gotplt_section),
+        '.data': copy.deepcopy(meminfo.data_section),
+        '.bss': copy.deepcopy(meminfo.bss_section),
+        'heap': copy.deepcopy(meminfo.heap),
+        'libc': copy.deepcopy(meminfo.libc),
+        'ld': copy.deepcopy(meminfo.ld),
+        'stack_unused': copy.deepcopy(meminfo.stack_unused),
+        'stack': copy.deepcopy(meminfo.stack_used)
     }
     if dic1['heap'][0] == dic1['heap'][1]:
-        dic1['heap'][0] = dic1['.bss'][1]
-        dic1['heap'][1] = dic1['.bss'][1]
+        dic1['heap'][0] = copy.deepcopy(dic1['.bss'][1])
+        dic1['heap'][1] = copy.deepcopy(dic1['.bss'][1])
     dic2 = {
-        "regs": meminfo.regs,
-        "frames": meminfo.frames,
-        "marks": meminfo.marks
+        "regs": copy.deepcopy(meminfo.regs),
+        "frames": copy.deepcopy(meminfo.frames),
+        "marks": copy.deepcopy(meminfo.marks)
     }
     return dic1, dic2
