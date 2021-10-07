@@ -6,11 +6,15 @@ GDBの拡張である[pwndbg](https://github.com/pwndbg/pwndbg)のforkです。�
 
 本家のpwndbgと同じく起動すると、従来のpwndbgのCLIに加え、pwndbg-perceptorのGUIが新しいウィンドウとして表示されます。
 
-![pwndbg-perceptorの表示画面](/path/to/image.png "pwndbg-perceptorの表示画面")
+![pwndbg-perceptorの表示画面](perceptor_src/readme_1.png "pwndbg-perceptorの表示画面")
 
 GUIの左側は実際pwndbgで起動している実行ファイルのメモリ内の現状を示しており、スクロールすることで全体が確認できます。GUIはデフォルトで常にpwndbg内で実行されている実行ファイルと同期されていて、リアルタイムで更新されています。（毎breakpointでGUIは更新されます）
 
 ## 互換性
+
+### pwndbgのバージョン
+
+pwndbg-perceptorは現時点で2021年9月21日の時点での本家のpwndbgのforkです。（特定のバージョンに依存しないように現在改良をしています）
 
 ### 使用OS
 
