@@ -378,9 +378,6 @@ class MemoryApp(App):
 
     def set_mode(self, b):
         self.update_enable = b
-
-    def set_meminfo(self, meminfo):
-        self.meminfo = meminfo
     
     def set_address(self, meminfo):
         self.rootWidget.set_address(meminfo)
