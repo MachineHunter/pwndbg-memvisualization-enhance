@@ -22,10 +22,6 @@ from kivy.core.text import LabelBase, DEFAULT_FONT
 from kivy.resources import resource_add_path
 
 
-# resource_add_path('./fonts')
-# LabelBase.register(DEFAULT_FONT, 'meiryo.ttc')
-
-
 class HelpMemory(Widget):
     pass
 
@@ -134,8 +130,6 @@ class MemoryRoot(FloatLayout):
     other_dic = DictProperty({})
     address_dic_snap = DictProperty({})
     other_dic_snap = DictProperty({})
-    start_address = NumericProperty()
-    end_address = NumericProperty()
     areas = ListProperty(['.plt', '.plt.got', '.text', '.got', '.got.plt', '.data', '.bss', 'heap', '︙', 'libc', 'ld', 'stack_unused', 'stack'])
     scroll_height = NumericProperty()
     y_dic = DictProperty({})
@@ -148,11 +142,6 @@ class MemoryRoot(FloatLayout):
     margin_y = NumericProperty(180)
     mapped_y = NumericProperty(360)
     all_y = NumericProperty(0)
-    meminfo = ObjectProperty()
-    snapinfo = ObjectProperty()
-    regs = DictProperty({})
-    frames = DictProperty({})
-    marks = ListProperty([])
     def __init__(self, **kwargs):
         super(MemoryRoot, self).__init__(**kwargs)
     
