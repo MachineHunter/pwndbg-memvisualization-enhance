@@ -47,7 +47,6 @@ GUIの右側には複数ボタンがあり、以下の通り機能します：
 
 - マーキング：pwndbgのCLI内で`mark <マークしたいアドレス>`（例：`mark 0xfffffffffd50`）と入力するとGUI内にそのマークの相対的な位置を表す線が引かれます。マーキングは複数回行え、その都度GUI上で各マークに番号が振られます。マーキングを外したい場合は`unmark <マークに振られた番号>`（例：`unmark 5`）と入力すればマークを取り除けます。CLI上で現在つけてあるマーキングを確認したい場合は`mark list`で確認できます。
 
-
 ### snapshot
 ![gif](perceptor_src/perceptor_snapshot.gif)
 
@@ -57,8 +56,7 @@ GUIの右側には複数ボタンがあり、以下の通り機能します：
 ### mark
 ![gif](perceptor_src/perceptor_mark.gif)
 
-
-##　表示内容
+## 表示内容
 
 ### セクション
 

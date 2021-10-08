@@ -45,7 +45,16 @@ Other controls:
 
 - Marking: Within the pwndbg CLI, input `mark <address you want to mark>` (ex: `mark 0xfffffffffd50`) to place a marker on the GUI display in the form of a horizontal line. Multiple markers can be placed, each being indexed with increasing ID. To remove markers, input `unmark <ID of marker you want to remove>` (ex: `unmark 5`). Furthermore, input `mark list` to display the list of current markers, as well as their ID.
 
-##　Displayed Contents
+### snapshot
+![gif](perceptor_src/perceptor_snapshot.gif)
+
+### freeze
+![gif](perceptor_src/perceptor_freeze.gif)
+
+### mark
+![gif](perceptor_src/perceptor_mark.gif)
+
+## Displayed Contents
 
 ### Sections
 
