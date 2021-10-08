@@ -24,7 +24,7 @@ pwndbg-perceptorは現時点でLinux上でしか作動確認がされておら�
 
 ## 実装詳細/貢献
 
-pwndbg-perceptorはpwndbgのソースコード内の`/path/to/perceptor/`（TODO: 実際のパスを入力）内からperceptor専用のコードを`/pwndbg/commands/context.py`等の本家のスクリプトに実行してもらうことで作動しています。
+pwndbg-perceptorはpwndbgのソースコード内の`/pwndbg/perceptor/`、`/pwndbg/perceptorGUI/`内からperceptor専用のコードを`/pwndbg/commands/context.py`等の本家のスクリプトに実行してもらうことで作動しています。
 
 現在pwndbgのforkとして開発を進めていますが、いずれはpwndbgへのpull requestとして実装していくことを目標としています。
 

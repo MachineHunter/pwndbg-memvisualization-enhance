@@ -22,7 +22,7 @@ pwndbg-perceptor has only been tested on Linux at this point. This fork only sup
 
 ## Implementation Details/Contribution
 
-pwndbg-perceptor is implemented by placing original code in `/path/to/perceptor/` (TODO: Insert actual path), and having original pwndbg files like `/pwndbg/commands/context.py` call them to function.
+pwndbg-perceptor is implemented by placing original code in `/pwndbg/perceptor/`, `/pwndbg/perceptorGUI/`, and having original pwndbg files like `/pwndbg/commands/context.py` call them to function.
 
 We plan on opening a pull request to the original pwndbg once we are able to smooth out the (many) edges this extension currently has. Please keep in mind that this fork is currently at its prototype stage, and that a pull request to the original pwndbg may be far ahead in time.
 
