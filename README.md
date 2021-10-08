@@ -1,65 +1,97 @@
-# pwndbg
+# pwndbg-perceptor
 
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://choosealicense.com/licenses/mit/)
-[![Discord](https://img.shields.io/discord/843809097920413717?label=Discord&style=plastic)](https://discord.gg/x47DssnGwm)
+(English documentation is available [here](README_en.md))
 
-`pwndbg` (/poʊndbæg/) is a GDB plug-in that makes debugging with GDB suck less, with a focus on features needed by low-level software developers, hardware hackers, reverse-engineers and exploit developers.
+GDBの拡張である[pwndbg](https://github.com/pwndbg/pwndbg)のforkです。初めてpwndbgを使うバイナリ入門者にとって出力される情報をわかりやすくすることでより効率的にpwndbgに使い慣れてもらったり、バイナリ解析の周辺知識を勉強/応用しやすくすることを主な目的とした拡張機能です。
 
-It has a boatload of features, see [FEATURES.md](FEATURES.md).
+## 機能概要
 
-## Why?
+本家のpwndbgと同じく起動すると、従来のpwndbgのCLIに加え、pwndbg-perceptorのGUIが新しいウィンドウとして表示されます。
 
-Vanilla GDB is terrible to use for reverse engineering and exploit development. Typing `x/g30x $esp` is not fun, and does not  confer much information.  The year is 2021 and GDB still lacks a real hexdump command!  GDB's syntax is arcane and difficult to approach.  Windbg users are completely lost when they occasionally need to bump into GDB.
+![pwndbg-perceptorの表示画面](perceptor_src/readme_1.png "pwndbg-perceptorの表示画面")
 
-## What?
+GUIの左側は実際pwndbgで起動している実行ファイルのメモリ内の現状を示しており、スクロールすることで全体が確認できます。GUIはデフォルトで常にpwndbg内で実行されている実行ファイルと同期されていて、リアルタイムで更新されています。（毎breakpointでGUIは更新されます）
 
-Pwndbg is a Python module which is loaded directly into GDB, and provides a suite of utilities and crutches to hack around all of the cruft that is GDB and smooth out the rough edges.
+## 互換性
 
-Many other projects from the past (e.g., [gdbinit][gdbinit], [PEDA][PEDA]) and present (e.g. [GEF][GEF]) exist to fill some these gaps.  Each provides an excellent experience and great features -- but they're difficult to extend (some are unmaintained, and all are a single [100KB][gdbinit2], [200KB][peda.py], or [363KB][gef.py] file (respectively)).
+### pwndbgのバージョン
 
-Pwndbg exists not only to replace all of its predecessors, but also to have a clean implementation that runs quickly and is resilient against all the weird corner cases that come up.  It also comes batteries-included, so all of its features are available if you run `setup.sh`.
+pwndbg-perceptorは現時点で2021年9月21日の時点での本家のpwndbgのforkです。（特定のバージョンに依存しないように現在改良をしています）
 
-[gdbinit]: https://github.com/gdbinit/Gdbinit
-[gdbinit2]: https://github.com/gdbinit/Gdbinit/blob/master/gdbinit
+### 使用OS
 
-[PEDA]: https://github.com/longld/peda
-[peda.py]: https://github.com/longld/peda/blob/master/peda.py
+pwndbg-perceptorは現時点でLinux上でしか作動確認がされておらず、UTF-8に対応しているOSしか対応しておりません。（後程対応OSを広げる予定です）
 
-[GEF]: https://github.com/hugsy/gef
-[gef.py]: https://github.com/hugsy/gef/blob/master/gef.py
+## 実装詳細/貢献
 
-## How?
+pwndbg-perceptorはpwndbgのソースコード内の`/path/to/perceptor/`（TODO: 実際のパスを入力）内からperceptor専用のコードを`/pwndbg/commands/context.py`等の本家のスクリプトに実行してもらうことで作動しています。
 
-Installation is straightforward.  Pwndbg is best supported on Ubuntu 18.04 with GDB 7.11, and Ubuntu 20.04 with GDB 8.1.
+現在pwndbgのforkとして開発を進めていますが、いずれはpwndbgへのpull requestとして実装していくことを目標としています。
 
-```shell
-git clone https://github.com/pwndbg/pwndbg
-cd pwndbg
-./setup.sh
-```
+pwndbg-perceptorへコードの修正/機能の追加実装などは大歓迎です。Issueを立てていただいて、該当するpull requestを立てていただければこちらで対応いたします。（返事/対応に時間がかかることもありますが、ご了承ください）
 
-Other Linux distributions are also supported via `setup.sh`, including:
+### 解析対象
 
-* Debian-based OSes (via apt-get)
-* Fedora and Red Hat (via dnf)
-* Clear (via swiped)
-* OpenSUSE LEAP (via zypper)
-* Arch and Manjaro (via community AUR packages)
-* Void (via xbps)
-* Gentoo (via emerge)
+現時点で解析対象はx86_64のバイナリしか想定していません（対応OS同様、対応範囲は後程広げる予定です）
 
-If you use any Linux distribution other than Ubuntu, we recommend using the [latest available GDB](https://www.gnu.org/software/gdb/download/) built from source.  Be sure to pass `--with-python=/path/to/python` to `./configure`.
+## 操作
 
-## What can I do with that?
+GUIの右側には複数ボタンがあり、以下の通り機能します：
 
-For further info about features/functionalities, see [FEATURES](FEATURES.md).
+- `Stop/Play`: GUIのリアルタイム更新を中断/再開します
+- `Snapshot`: 現在の状態のメモリの表示を一時的に保存します（現状再起動するとsnapshotはリセットされます）
+- `View Snapshot`: Snapshotボタンで撮ったsnapshotを確認することができます
+- `Update`: たまに更新がされない/バグる時があるので、そのために手動で最新の状態へGUIの表示を更新させます
 
-## Who?
+その他可能な操作：
 
-Pwndbg is an open-source project, written and maintained by [many contributors](https://github.com/pwndbg/pwndbg/graphs/contributors)!
+- マーキング：pwndbgのCLI内で`mark <マークしたいアドレス>`（例：`mark 0xfffffffffd50`）と入力するとGUI内にそのマークの相対的な位置を表す線が引かれます。マーキングは複数回行え、その都度GUI上で各マークに番号が振られます。マーキングを外したい場合は`unmark <マークに振られた番号>`（例：`unmark 5`）と入力すればマークを取り除けます。CLI上で現在つけてあるマーキングを確認したい場合は`mark list`で確認できます。
 
-Want to help with development? Read [CONTRIBUTING](.github/CONTRIBUTING.md) or [join our Discord server](https://discord.gg/x47DssnGwm)!
+### snapshot
+![gif](perceptor_src/perceptor_snapshot.gif)
 
-## Contact
-If you have any questions not worthy of a [bug report](https://github.com/pwndbg/pwndbg/issues), feel free to ping
-anybody on [Discord](https://discord.gg/x47DssnGwm) and ask away.
+### freeze
+![gif](perceptor_src/perceptor_freeze.gif)
+
+### mark
+![gif](perceptor_src/perceptor_mark.gif)
+
+## 表示内容
+
+### セクション
+
+以下の通りにセクションを分け、相対的なサイズに応じてGUI上の表示の大きさを調節しています（実際のセクションのサイズ通りで各セクションの表示サイズを変えると極端に見えづらくなるので、大きいセクションほど拡大する度合いを減らしています）：
+- .plt
+- .plt.got
+- .text
+- .got
+- .got.plt
+- .data
+- .bss
+- heap
+- None（heap/stack用の未使用のメモリ領域）
+- libc
+- ld
+- stack_unusued（stack内でallocateされているが、未使用の領域）
+- stack（stack内で値が入っていて、使用されている領域）
+
+各セクションはGUI上にブロックとして表示されており、名前、開始/終了アドレス、及びサイズでラベルされています。
+
+### レジスタ値
+
+現在のRIP、RSPレジスタが指しているアドレスが線で示されています。
+
+### スタックフレーム
+
+スタック内にはスタックフレーム（mainフレーム以降）の相対的な位置/サイズが白い線でマークされています。
+
+## 実装予定の機能
+
+- Heap内の構造体等のさらに多くのメモリ内の要素を可視化
+- GUIのUI/UXの改善
+- mark機能をGUIからアクセス可能にする
+- （もし上記に記載されていない追加希望の要素などがあれば提案大歓迎です）
+
+## 現在確認されているバグ/おかしな挙動
+
+TODO
