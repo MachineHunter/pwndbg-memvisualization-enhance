@@ -49,13 +49,14 @@ GUIの右側には複数ボタンがあり、以下の通り機能します：
 
 
 ### snapshot
-![gif](perceptor_src/perceptor-snapshot.gif)
+![gif](perceptor_src/perceptor_snapshot.gif)
 
 ### freeze
-![gif](perceptor_src/perceptor-freeze.gif)
+![gif](perceptor_src/perceptor_freeze.gif)
 
 ### mark
-![gif](perceptor_src/perceptor-mark.gif)
+![gif](perceptor_src/perceptor_mark.gif)
+
 
 ##　表示内容
 
