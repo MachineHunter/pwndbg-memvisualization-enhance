@@ -1,6 +1,6 @@
 import sys
 import threading
-import pwndbg.memviewGUI.memGUI
+import pwndbg.perceptorGUI.memGUI
 import logging
 
 logging.getLogger("kivy").disabled = True
@@ -8,8 +8,8 @@ logging.getLogger("kivy").disabled = True
 
 def init():
     global app    
-    app = pwndbg.memviewGUI.memGUI.MemoryApp()    
-    th_app = threading.Thread(target=pwndbg.memviewGUI.memGUI.app_run, args=(app,), daemon=True)
+    app = pwndbg.perceptorGUI.memGUI.MemoryApp()    
+    th_app = threading.Thread(target=pwndbg.perceptorGUI.memGUI.app_run, args=(app,), daemon=True)
     th_app.start()
 
 def get_instance():
