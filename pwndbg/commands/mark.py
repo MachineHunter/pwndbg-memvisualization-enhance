@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import pwndbg.commands
-import pwndbg.memview.memory
+import pwndbg.perceptor.memory
 
 
 # mark
@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description="""
     Mark specified address and displays its location on GUI
     (Usage: mark <address>)
     """)
-parser.add_argument("address", nargs="?", default=None, type=int, help="The address to show in memview")
+parser.add_argument("address", nargs="?", default=None, type=int, help="The address to show in perceptor")
 @pwndbg.commands.ArgparsedCommand(parser)
 @pwndbg.commands.OnlyWhenRunning
 def mark(address=None):
@@ -20,7 +20,7 @@ def mark(address=None):
     if address==None:
         return False
 
-    meminfo = pwndbg.memview.memory.set("marks", int(address))
+    meminfo = pwndbg.perceptor.memory.set("marks", int(address))
     return True
 
 
@@ -39,5 +39,5 @@ def unmark(index=None):
     if index==None:
         return False
 
-    meminfo = pwndbg.memview.memory.unset("marks", int(index))
+    meminfo = pwndbg.perceptor.memory.unset("marks", int(index))
     return True

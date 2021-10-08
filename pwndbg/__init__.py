@@ -82,8 +82,8 @@ import pwndbg.vmmap
 import pwndbg.wrappers
 import pwndbg.wrappers.checksec
 import pwndbg.wrappers.readelf
-import pwndbg.memviewGUI.memGUI
-import pwndbg.memviewGUI.initGUI
+import pwndbg.perceptorGUI.memGUI
+import pwndbg.perceptorGUI.initGUI
 
 __version__ = pwndbg.version.__version__
 version = __version__
@@ -173,4 +173,4 @@ if 1:
 pwndbg.commands.comments.init()
 
 # init memGUI
-pwndbg.memviewGUI.initGUI.init()
+pwndbg.perceptorGUI.initGUI.init()

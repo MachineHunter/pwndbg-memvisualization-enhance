@@ -29,9 +29,9 @@ import pwndbg.regs
 import pwndbg.symbol
 import pwndbg.ui
 import pwndbg.vmmap
-import pwndbg.memview.memory
-import pwndbg.memviewGUI.memGUI
-import pwndbg.memviewGUI.initGUI
+import pwndbg.perceptor.memory
+import pwndbg.perceptorGUI.memGUI
+import pwndbg.perceptorGUI.initGUI
 from pwndbg.color import message
 from pwndbg.color import theme
 
@@ -46,7 +46,7 @@ def clear_screen(out=sys.stdout):
 config_clear_screen = pwndbg.config.Parameter('context-clear-screen', False, 'whether to clear the screen before printing the context')
 config_output = pwndbg.config.Parameter('context-output', 'stdout', 'where pwndbg should output ("stdout" or file/tty).')
 config_context_sections = pwndbg.config.Parameter('context-sections',
-                                                  'regs disasm code ghidra stack memview backtrace expressions',
+                                                  'regs disasm code ghidra stack perceptor backtrace expressions',
                                                   'which context sections are displayed (controls order)')
 
 # Storing output configuration per section
@@ -553,14 +553,10 @@ def context_stack(target=sys.stdout, with_banner=True, width=None):
     return result
 
 
-def context_memview(target=sys.stdout, with_banner=False, width=None):
-    app = pwndbg.memviewGUI.initGUI.get_instance()
-    meminfo = pwndbg.memview.memory.get()
-    pwndbg.memviewGUI.memGUI.set_address(app, meminfo)
-    # print("used:" + hex(meminfo.stack_used[0]) + "-" + hex(meminfo.stack_used[1]))
-    # print("unused:" + hex(meminfo.stack_unused[0]) + "-" + hex(meminfo.stack_unused[1]))
-    # for k,v in meminfo.frames.items():
-        # print(k + ":" + hex(v[0])+"-"+hex(v[1]))
+def context_perceptor(target=sys.stdout, with_banner=False, width=None):
+    app = pwndbg.perceptorGUI.initGUI.get_instance()
+    meminfo = pwndbg.perceptor.memory.get()
+    pwndbg.perceptorGUI.memGUI.set_address(app, meminfo)
     return ""
 
 
@@ -678,7 +674,7 @@ context_sections = {
     'a': context_args,
     'c': context_code,
     's': context_stack,
-    'm': context_memview,
+    'p': context_perceptor,
     'b': context_backtrace,
     'e': context_expressions,
     'g': context_ghidra,
